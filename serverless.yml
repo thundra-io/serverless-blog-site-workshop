@@ -10,7 +10,7 @@ custom:
   blogPostNotificationTopicName: BlogPostNotificationTopic
   blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
   # For Thundra integration
-  thundraApiKey: <YOUR API KEY HERE>
+  thundraApiKey: d547ec75-0b0b-4d00-9592-28efcf1e3ddc
 
 resources:
   Resources:
@@ -24,8 +24,6 @@ resources:
         TableName: ${self:custom.blogPostTableName}
         AttributeDefinitions:
         - AttributeName: id
-          AttributeType: S
-        - AttributeName: username
           AttributeType: S
         KeySchema:
         - AttributeName: id
@@ -45,7 +43,7 @@ provider:
   # For Thundra integration
   runtime: provided #nodejs8.10
   region: eu-west-2
-  profile: default # or another profile
+  profile: staging-thundra # or another profile
   # For Thundra integration
   layers:
     - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:12
@@ -82,6 +80,7 @@ functions:
       - http:
           method: PUT
           path: blog
+          cors: true
   deleteBlogPost:
     handler: blogApi.deleteBlogPost
     environment:
@@ -90,6 +89,7 @@ functions:
       - http:
           method: DELETE
           path: blog/{blogPostId}
+          cors: true
   getBlogPost:
     handler: blogApi.getBlogPost
     environment:
@@ -98,6 +98,7 @@ functions:
       - http:
           method: GET
           path: blog/{blogPostId}
+          cors: true
   searchBlogPosts:
     handler: blogApi.searchBlogPosts
     environment:
@@ -106,6 +107,7 @@ functions:
       - http:
           method: GET
           path: blog/search
+          cors: true
   blogPostProcessor:
     handler: blogPostProcessor.handler
     environment:
