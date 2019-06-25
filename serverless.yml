@@ -1,0 +1,130 @@
+service: blog-site
+
+plugins:
+  # For Thundra integration
+  - serverless-plugin-thundra-lambda-adapters-cw # npm install serverless-plugin-thundra-lambda-adapters-cw
+
+custom:
+  blogPostProcessQueueName: BlogPostProcessQueue
+  blogPostTableName: BlogPostTable
+  blogPostNotificationTopicName: BlogPostNotificationTopic
+  blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
+  # For Thundra integration
+  thundraApiKey: <YOUR API KEY HERE>
+
+resources:
+  Resources:
+    BlogPostProcessQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.blogPostProcessQueueName}
+    BlogPostTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.blogPostTableName}
+        AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: username
+          AttributeType: S
+        KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+    BlogPostNotificationTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.blogPostNotificationTopicName}
+
+provider:
+  name: aws
+  # For Thundra integration
+  runtime: provided #nodejs8.10
+  region: eu-west-2
+  profile: default # or another profile
+  # For Thundra integration
+  layers:
+    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:12
+  environment:
+    # For Thundra integration
+    thundra_apiKey: ${self:custom.thundraApiKey}
+    thundra_agent_lambda_trace_instrument_traceableConfig: service.blogPostService.*[traceArgs=true,traceReturnValue=true]
+    thundra_agent_lambda_report_cloudwatch_enable: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+      Resource: arn:aws:sqs:${self:provider.region}:*:${self:custom.blogPostProcessQueueName}
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.blogPostTableName}
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "*" #arn:aws:sns:${self:provider.region}:*:${self:custom.blogPostNotificationTopicName}
+
+functions:
+  postBlogPost:
+    handler: blogApi.postBlogPost
+    environment:
+      BLOG_POST_PROCESS_QUEUE_URL:
+        Ref: BlogPostProcessQueue
+    events:
+      - http:
+          method: PUT
+          path: blog
+  deleteBlogPost:
+    handler: blogApi.deleteBlogPost
+    environment:
+      BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
+    events:
+      - http:
+          method: DELETE
+          path: blog/{blogPostId}
+  getBlogPost:
+    handler: blogApi.getBlogPost
+    environment:
+      BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
+    events:
+      - http:
+          method: GET
+          path: blog/{blogPostId}
+  searchBlogPosts:
+    handler: blogApi.searchBlogPosts
+    environment:
+      BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
+    events:
+      - http:
+          method: GET
+          path: blog/search
+  blogPostProcessor:
+    handler: blogPostProcessor.handler
+    environment:
+      BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
+      BLOG_POST_NOTIFICATION_TOPIC_ARN:
+        Ref: BlogPostNotificationTopic
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - BlogPostProcessQueue
+              - Arn
+          batchSize: 1
+  blogPostReplicator:
+    handler: blogPostReplicator.handler
+    environment:
+      BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [ BlogPostTable, StreamArn ]
