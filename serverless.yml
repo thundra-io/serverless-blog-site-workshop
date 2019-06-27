@@ -10,7 +10,7 @@ custom:
   blogPostNotificationTopicName: BlogPostNotificationTopic
   blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
   # For Thundra integration
-  thundraApiKey: d547ec75-0b0b-4d00-9592-28efcf1e3ddc
+  thundraApiKey: <YOUR THUNDRA API KEY HERE>
 
 resources:
   Resources:
@@ -43,7 +43,7 @@ provider:
   # For Thundra integration
   runtime: provided #nodejs8.10
   region: eu-west-2
-  profile: staging-thundra # or another profile
+  profile: default # or another profile
   # For Thundra integration
   layers:
     - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:12

@@ -60,10 +60,12 @@ module.exports.saveBlogPost = (blogPost) => {
             'title': {S: blogPost.title},
             'post': {S: blogPost.post},
             'username': {S: blogPost.username},
-            'phoneNumber': {S: blogPost.phoneNumber},
             'timestamp': {N: blogPost.timestamp.toString()},
         }
     };
+    if (blogPost.phoneNumber && blogPost.phoneNumber.length > 0) {
+        params.Item['phoneNumber'] = {S: blogPost.phoneNumber};
+    }
     return dynamodb.putItem(params).promise();
 };
 
@@ -94,12 +96,25 @@ module.exports.publishBlogPostNotification = (message, phoneNumber) => {
     console.log('Publishing blog post notification: ' + message);
 
     const promises = [];
-    if (phoneNumber) {
+    if (phoneNumber && phoneNumber.length > 0) {
         const params = {
             PhoneNumber: phoneNumber,
             Message: message
         };
-        const promise = snsForSMS.publish(params).promise();
+        const promise = new Promise((resolve, reject) => {
+            snsForSMS.publish(params).promise()
+                .then(result => {
+                    return resolve(result);
+                })
+                .catch(err => {
+                    if (err.code === 'InvalidParameter') {
+                        console.log('Couldn\'t send SMS as the phone number is invalid: ' + phoneNumber);
+                        return resolve(err);
+                    } else {
+                        return reject(err);
+                    }
+                });
+        });
         promises.push(promise);
     }
     const params = {
@@ -153,6 +168,7 @@ module.exports.deleteBlogPostFromIndex = (blogPostId) => {
 module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestamp) => {
     console.log('Searching blog posts for keyword=' + keyword + ', username=' + username +
                 ', startTimestamp=' + startTimestamp + ', endTimestamp=' + endTimestamp);
+
     const conditions = [];
     if (keyword) {
         conditions.push({
