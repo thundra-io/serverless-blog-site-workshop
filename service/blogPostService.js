@@ -66,6 +66,7 @@ module.exports.saveBlogPost = (blogPost) => {
     if (blogPost.phoneNumber && blogPost.phoneNumber.length > 0) {
         params.Item['phoneNumber'] = {S: blogPost.phoneNumber};
     }
+    console.log("params: " + JSON.stringify(params));
     return dynamodb.putItem(params).promise();
 };
 
@@ -82,7 +83,7 @@ module.exports.deleteBlogPost = (blogPostId) => {
 };
 
 module.exports.sendBlogPostMessage = (blogPost) => {
-    console.log('Saving blog post message: ' + JSON.stringify(blogPost));
+    console.log('Sending blog post message: ' + JSON.stringify(blogPost));
 
     const params = {
         MessageBody: JSON.stringify(blogPost),

@@ -45,8 +45,10 @@ module.exports.getBlogPost = (event, context, callback) => {
                         title: result.Item.title.S,
                         post: result.Item.post.S,
                         username: result.Item.username.S,
-                        phoneNumber: result.Item.phoneNumber.S,
                         timestamp: parseInt(result.Item.timestamp.N),
+                    };
+                    if (result.Item.phoneNumber) {
+                        blogPost.phoneNumber = result.Item.phoneNumber.S;
                     }
                     common.sendHttpResponse(200, blogPost, callback);
                 } else {
