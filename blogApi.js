@@ -95,6 +95,7 @@ module.exports.searchBlogPosts = (event, context, callback) => {
                     const blogPost = {
                         id: hit._id,
                         username: hit._source.username,
+                        title: hit._source.title,
                         timestamp: hit._source.timestamp
                     };
                     blogPosts.push(blogPost);
