@@ -1,0 +1,25 @@
+.blog-list {
+    
+}
+
+.table-data-row {
+    cursor: pointer;
+}
+
+.search-form-button {
+    margin-top: auto !important;
+    display: flex;
+    justify-content: flex-end;
+}
+.search-form-label {
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+}
+.search-form-button > button {
+    border: 1px solid transparent !important;
+}
+
+.blog-item-wrapper {
+    cursor: pointer;
+    margin-bottom: 10px;
+}
