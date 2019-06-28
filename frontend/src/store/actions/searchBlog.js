@@ -40,12 +40,12 @@ export const searchBlogsAction = (keyword, username, startDate, endDate) => {
         const endTimestamp = new Date(endDate).getTime();
 
         const url = `${getState().globalUrl.urlText}/search?keyword=${keyword}&username=${username}&start-timestamp=${startTimestamp}&end-timestamp=${endTimestamp}`;
-        console.log("searchBlogsAction; url: ", url);
+        // console.log("searchBlogsAction; url: ", url);
 
         return fetch(`${url}`)
             .then(data => data.json())
             .then(data => {
-                console.log("searchBlogsAction; data, getState: ", data, getState());
+                // console.log("searchBlogsAction; data, getState: ", data, getState());
                 dispatch(receive_blogs(data))
             })
             .catch(err => dispatch(receive_blogs_error(err)));

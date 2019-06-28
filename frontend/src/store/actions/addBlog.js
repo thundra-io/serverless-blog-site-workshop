@@ -40,8 +40,8 @@ export const addBlogAction = (title, post, username, phoneNumber) => {
     return function (dispatch, getState) {
 
         const url = `${getState().globalUrl.urlText}`;
-        console.log("addBlogAction; url: ", url);
-        console.log("addBlogAction; newPost: ", JSON.stringify(newPost));
+        // console.log("addBlogAction; url: ", url);
+        // console.log("addBlogAction; newPost: ", JSON.stringify(newPost));
 
         return fetch(`${url}`, {
             method: 'PUT',
@@ -50,7 +50,7 @@ export const addBlogAction = (title, post, username, phoneNumber) => {
         })
             .then(data => data.json())
             .then(data => {
-                console.log("addBlogAction; data, getState: ", data, getState());
+                // console.log("addBlogAction; data, getState: ", data, getState());
                 dispatch(receive_add_blog(data))
             })
             .catch(err => dispatch(receive_add_blog_error(err)));

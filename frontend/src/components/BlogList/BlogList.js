@@ -37,7 +37,7 @@ class BlogList extends Component {
         if (prevProps.deletedBlog.isDeleteBlogFetching &&
             this.props.deletedBlog.isDeleteBlogFetching !== prevProps.deletedBlog.isDeleteBlogFetching
         ) {
-            console.log("BlogList, CDU; props, prevProps: ", this.props, prevProps);
+            // console.log("BlogList, CDU; props, prevProps: ", this.props, prevProps);
             setTimeout(() => {
                 // fetch search blogs after delete happens.
                 this.fetchSearchBlogs();
@@ -148,7 +148,7 @@ class BlogList extends Component {
     }
 
     handleSearchSubmit = (e, data) => {
-        console.log("BlogList, handlePostSubmit; e, data: ", e, data);
+        // console.log("BlogList, handlePostSubmit; e, data: ", e, data);
         this.fetchSearchBlogs();
     }
 
@@ -240,7 +240,7 @@ class BlogList extends Component {
     }
 
     render() {
-        console.log("BlogList; props: ", this.props);
+        // console.log("BlogList; props: ", this.props);
         const {isBlogDataFetching} = this.props.clickedBlog;
 
         return (

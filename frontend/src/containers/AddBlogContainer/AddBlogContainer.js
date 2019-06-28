@@ -6,7 +6,7 @@ import {addBlogAction} from "../../store/actions/addBlog";
 
 
 function mapStateToProps(store) {
-    console.log("AddBlogContainer; store: ", store);
+    // console.log("AddBlogContainer; store: ", store);
     return {
         searchedBlogs: store.searchBlog,
         addedBlog: store.addBlog

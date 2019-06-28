@@ -57,7 +57,7 @@ class AddBlog extends Component {
     }
 
     render() {
-        console.log("AddBlog; props, state: ", this.props, this.state);
+        // console.log("AddBlog; props, state: ", this.props, this.state);
 
         return (
 

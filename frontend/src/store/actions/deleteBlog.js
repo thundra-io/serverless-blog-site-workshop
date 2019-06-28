@@ -33,14 +33,14 @@ export const deleteBlogAction = (blogId) => {
     return function (dispatch, getState) {
 
         const url = `${getState().globalUrl.urlText}/${blogId}`;
-        console.log("deleteBlogAction; url: ", url);
+        // console.log("deleteBlogAction; url: ", url);
 
         return fetch(`${url}`, {
             method: 'DELETE',
         })
             .then(data => data.json())
             .then(data => {
-                console.log("deleteBlogAction; data, getState: ", data, getState());
+                // console.log("deleteBlogAction; data, getState: ", data, getState());
                 dispatch(receive_delete_blog(data))
             })
             .catch(err => dispatch(receive_delete_blog_error(err)));

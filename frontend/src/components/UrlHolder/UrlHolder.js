@@ -24,12 +24,12 @@ class UrlHolder extends Component {
 
 
     toggleUrlBarLock = () => {
-        console.log("toggleUrlBarLock");
+        // console.log("toggleUrlBarLock");
         this.props.toggleUrlLock();
     }
 
     handleUrlInputChange = (e) => {
-        console.log("handleUrlInputChange; e: ", e.currentTarget.value);
+        // console.log("handleUrlInputChange; e: ", e.currentTarget.value);
         const currentUrl = e.currentTarget.value;
         this.setState({
             urlString: currentUrl

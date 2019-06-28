@@ -32,12 +32,12 @@ export const getBlogAction = (blogId) => {
 
     return function (dispatch, getState) {
         const url = `${getState().globalUrl.urlText}/${blogId}`;
-        console.log("getBlogAction; url: ", url);
+        // console.log("getBlogAction; url: ", url);
 
         return fetch(`${url}`)
             .then(data => data.json())
             .then(data => {
-                console.log("getBlogAction; data, getState: ", data, getState());
+                // console.log("getBlogAction; data, getState: ", data, getState());
                 dispatch(receive_blog(data))
             })
             .catch(err => dispatch(receive_blog_error(err)));
