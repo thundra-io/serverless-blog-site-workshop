@@ -4,6 +4,7 @@
 
 - Sign-up to [Thundra Console](https://console.thundra.io) and get your API key
 - Set your API key to `thundraApiKey` property under `custom` section in `serverless.yml`
+- Install Thundra Serverless framework async monitoring plugin by `npm install serverless-plugin-thundra-lambda-adapters-cw`
 - Deploy serverless application stack by `sls deploy`
 - Record created endpoints which are printed in the output of deploy:
 ```
