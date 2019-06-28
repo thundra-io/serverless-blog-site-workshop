@@ -38,6 +38,7 @@ in the deploy output as shown in the `Install` section above.
     "phoneNumber": "<phone number to interact over SMS about blog post acceptance status>"
 }
 ```
+**Note:** `phoneNumber` is optional.
 
 ### Search blog post
 This is the endpoint for searching according to given criteria in the blog posts which is shown as  
