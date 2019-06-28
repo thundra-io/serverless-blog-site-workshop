@@ -75,3 +75,8 @@ in the deploy output as shown in the `Install` section above.
 ```
 https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/1234-5678-90
 ```
+
+## Web Application
+
+Blog site application is available at [blog-site-app.thundra.io](https://blog-site-app.thundra.io). 
+You can set your base URL (`https://<api-id>.eu-west-2.amazonaws.com/dev/blog`) to be used/consumed by the frontend application.
