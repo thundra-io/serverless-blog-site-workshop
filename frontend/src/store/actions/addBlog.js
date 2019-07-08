@@ -44,7 +44,7 @@ export const addBlogAction = (title, post, username, phoneNumber) => {
         // console.log("addBlogAction; newPost: ", JSON.stringify(newPost));
 
         return fetch(`${url}`, {
-            method: 'PUT',
+            method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newPost)
         })
