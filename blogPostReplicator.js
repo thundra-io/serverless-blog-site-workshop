@@ -13,7 +13,6 @@ module.exports.handler = (event, context, callback) => {
             const username = record.dynamodb.NewImage.username.S;
             const phoneNumber = record.dynamodb.NewImage.phoneNumber ? record.dynamodb.NewImage.phoneNumber.S : null;
             const timestamp = parseInt(record.dynamodb.NewImage.timestamp.N);
-            console.log('Replicating blog post with content=' + post + ' and id=' + id + ' ...');
             const blogPost = {
                 id: id,
                 title: title,
@@ -24,11 +23,12 @@ module.exports.handler = (event, context, callback) => {
             if (phoneNumber) {
                 blogPost.phoneNumber = phoneNumber;
             }
-            const promise = blogPostService.indexBlogPost(blogPost);
+            console.log('Saving blog post: ', JSON.stringify(blogPost));
+            const promise = blogPostService.saveBlogPostToIndex(blogPost);
             promises.push(promise);
         } else if (record.eventName === 'REMOVE') {
             const id = record.dynamodb.Keys.id.S;
-            console.log('Deleting blog post with id=' + id + ' ...');
+            console.log('Deleting blog post with id: ', id);
             const promise = blogPostService.deleteBlogPostFromIndex(id);
             promises.push(promise);
         }

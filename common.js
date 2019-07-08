@@ -4,7 +4,7 @@ module.exports.sendHttpResponse = (statusCode, message, callback) => {
         headers: {
             "Access-Control-Allow-Origin": "*" // Required for CORS support to work
         },
-        body: JSON.stringify(message)
+        body: (typeof message === 'string' || message instanceof String) ? message : JSON.stringify(message)
     };
     callback(null, response);
 };

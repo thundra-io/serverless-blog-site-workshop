@@ -10,7 +10,7 @@ custom:
   blogPostNotificationTopicName: BlogPostNotificationTopic
   blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
   # For Thundra integration
-  thundraApiKey: <YOUR THUNDRA API KEY HERE>
+  thundraApiKey: <YOUR API KEY HERE>
 
 resources:
   Resources:
@@ -46,7 +46,7 @@ provider:
   profile: default # or another profile
   # For Thundra integration
   layers:
-    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:12
+    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:14
   environment:
     # For Thundra integration
     thundra_apiKey: ${self:custom.thundraApiKey}
@@ -78,7 +78,7 @@ functions:
         Ref: BlogPostProcessQueue
     events:
       - http:
-          method: PUT
+          method: POST
           path: blog
           cors: true
   deleteBlogPost:

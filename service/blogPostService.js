@@ -6,7 +6,7 @@ const BLOG_POST_PROCESS_QUEUE_URL = process.env.BLOG_POST_PROCESS_QUEUE_URL;
 const BLOG_POST_PROCESS_QUEUE_DELAY_SECONDS = parseInt(process.env.BLOG_POST_PROCESS_QUEUE_DELAY_SECONDS || '1');
 const BLOG_POST_NOTIFICATION_TOPIC_ARN = process.env.BLOG_POST_NOTIFICATION_TOPIC_ARN;
 const BLOG_POST_ES_HOST_NAME = process.env.BLOG_POST_ES_HOST_NAME;
-const BLOG_POST_ES_HOST_PORT = process.env.BLOG_POST_ES_HOST_PORT || 80;
+const BLOG_POST_ES_HOST_PORT = parseInt(process.env.BLOG_POST_ES_HOST_PORT || '80');
 
 const WHITE_SPACE_REGEX = new RegExp("\\s+");
 const BANNED_BLOG_POST_WORDS = new Set(['server']);
@@ -66,7 +66,6 @@ module.exports.saveBlogPost = (blogPost) => {
     if (blogPost.phoneNumber && blogPost.phoneNumber.length > 0) {
         params.Item['phoneNumber'] = {S: blogPost.phoneNumber};
     }
-    console.log("params: " + JSON.stringify(params));
     return dynamodb.putItem(params).promise();
 };
 
@@ -127,11 +126,10 @@ module.exports.publishBlogPostNotification = (message, phoneNumber) => {
     return Promise.all(promises);
 };
 
-module.exports.indexBlogPost = (blogPost) => {
+module.exports.saveBlogPostToIndex = (blogPost) => {
     console.log('Indexing blog post: ' + JSON.stringify(blogPost));
 
-    return new Promise((resolve, reject) => {
-        esClient.index({
+    return esClient.index({
             index: 'blogpost',
             type: '_doc',
             id: blogPost.id,
@@ -142,27 +140,16 @@ module.exports.indexBlogPost = (blogPost) => {
                 "phoneNumber": blogPost.phoneNumber,
                 "timestamp": blogPost.timestamp,
             }
-        }).then((data) => {
-            return resolve(data);
-        }).catch((err) => {
-            return reject(err);
-        });
     });
 };
 
 module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     console.log('Deleting blog post with id=' + blogPostId);
 
-    return new Promise((resolve, reject) => {
-        esClient.delete({
+    return esClient.delete({
             index: 'blogpost',
             type: '_doc',
             id: blogPostId
-        }).then((data) => {
-            return resolve(data);
-        }).catch((err) => {
-            return reject(err);
-        });
     });
 };
 
@@ -202,7 +189,7 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
         conditions.push({
             range: {
                 "timestamp": {
-                    "gte": startTimestamp
+                    "gte": parseInt(startTimestamp)
                 }
             }
         });
@@ -211,13 +198,12 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
         conditions.push({
             range: {
                 "timestamp": {
-                    "lte": endTimestamp
+                    "lte": parseInt(endTimestamp)
                 }
             }
         });
     }
-    return new Promise((resolve, reject) => {
-        esClient.search({
+    return esClient.search({
             index: 'blogpost',
             type: '_doc',
             body: {
@@ -235,10 +221,5 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
                     }
                 ]
             }
-        }).then((data) => {
-            return resolve(data);
-        }).catch((err) => {
-            return reject(err);
-        });
     });
 };

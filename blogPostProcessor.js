@@ -1,6 +1,6 @@
 const blogPostService = require('./service/blogPostService');
 
-module.exports.handler = async(event, context, callback) => {
+module.exports.handler = async(event, context) => {
 	console.log('Processing blog post request: ' + JSON.stringify(event));
 
 	const promises = [];
@@ -8,10 +8,7 @@ module.exports.handler = async(event, context, callback) => {
 	for (let record of records) {
 		const blogPost = JSON.parse(record.body);
 		console.log('Processing blog post: ' + JSON.stringify(blogPost) + ' ...');
-        let hiMessage = 'Hi';
-        if (blogPost.username) {
-            hiMessage = 'Hi ' + blogPost.username;
-        }
+        let hiMessage = 'Hi ' + blogPost.username;
 		const rejectReason = blogPostService.validateBlogPost(blogPost.post);
 		if (!rejectReason) {
             const promise1 = blogPostService.saveBlogPost(blogPost);

@@ -1,7 +1,7 @@
 const thundra = require('@thundra/core');
+
 const common = require('./common');
 const blogPostService = require('./service/blogPostService');
-
 const uuidv1 = require('uuid/v1');
 
 module.exports.postBlogPost = (event, context, callback) => {
@@ -70,7 +70,11 @@ module.exports.deleteBlogPost = (event, context, callback) => {
     if (blogPostId !== null) {
         blogPostService.deleteBlogPost(blogPostId)
             .then(result => {
-                common.sendHttpResponse(200, 'DELETED', callback);
+                if (result.Attributes) {
+                    sendHttpResponse(200, 'DELETED', callback);
+                } else {
+                    sendHttpResponse(404, 'NOT FOUND', callback);
+                }
             })
             .catch(err => {
                 common.sendHttpResponse(500, err, callback);
@@ -87,7 +91,7 @@ module.exports.searchBlogPosts = (event, context, callback) => {
     const username = event.queryStringParameters && event.queryStringParameters.username;
     const startTimestamp = event.queryStringParameters && event.queryStringParameters["start-timestamp"];
     const endTimestamp = event.queryStringParameters && event.queryStringParameters["end-timestamp"];
-    if (keyword !== null || username !== null || startTimestamp !== null || endTimestamp !== null) {
+    if (!keyword || !username || !startTimestamp || !endTimestamp) {
         blogPostService.searchBlogPosts(keyword, username, startTimestamp, endTimestamp)
             .then(result => {
                 const blogPosts = [];
@@ -111,4 +115,4 @@ module.exports.searchBlogPosts = (event, context, callback) => {
             'At least one of the \'keyword\', \'username\', \'start-timestamp\' and \'end-timestamp\' parameters is required!',
             callback);
     }
-}
+};
