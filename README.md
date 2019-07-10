@@ -14,7 +14,7 @@ Service Information
 service: blog-site
 ...
 endpoints:
-  PUT - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog
+  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog
   DELETE - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/{blogPostId}
   GET - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/{blogPostId}
   GET - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/search
@@ -26,9 +26,9 @@ Note that `<api-id>` part of the endpoints is unique to every one and created AP
 
 ### Send blog post
 This is the endpoint for sending blog post which is shown as 
-`PUT - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog` 
+`POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog` 
 in the deploy output as shown in the `Install` section above. 
-- Its HTTP method type is `PUT`.
+- Its HTTP method type is `POST`.
 - It gets blog post information in the request body in JSON format as shown below:
 ```json
 {
