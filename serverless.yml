@@ -10,7 +10,7 @@ custom:
   blogPostNotificationTopicName: BlogPostNotificationTopic
   blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
   # For Thundra integration
-  thundraApiKey: <YOUR API KEY HERE>
+  thundraApiKey: <PUT YOUR API KEY HERE>
 
 resources:
   Resources:
@@ -37,6 +37,12 @@ resources:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: ${self:custom.blogPostNotificationTopicName}
+
+package:
+  exclude:
+    - .serverless
+    - .gitignore
+    - frontend/**
 
 provider:
   name: aws
@@ -103,6 +109,8 @@ functions:
     handler: blogApi.searchBlogPosts
     environment:
       BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
+      BLOG_POST_ES_INDEX_IDENTIFIER:
+        Ref: AWS::AccountId
     events:
       - http:
           method: GET
@@ -125,6 +133,8 @@ functions:
     handler: blogPostReplicator.handler
     environment:
       BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
+      BLOG_POST_ES_INDEX_IDENTIFIER:
+        Ref: AWS::AccountId
     events:
       - stream:
           type: dynamodb

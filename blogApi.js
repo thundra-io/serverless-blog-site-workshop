@@ -50,9 +50,9 @@ module.exports.getBlogPost = (event, context, callback) => {
                     if (result.Item.phoneNumber) {
                         blogPost.phoneNumber = result.Item.phoneNumber.S;
                     }
-                    common.sendHttpResponse(200, blogPost, callback);
+                    common.sendHttpResponse(202, blogPost, callback);
                 } else {
-                    common.sendHttpResponse(404, 'Not Found', callback);
+                    common.sendHttpResponse(404, 'NOT FOUND', callback);
                 }
             })
             .catch(err => {
@@ -94,17 +94,7 @@ module.exports.searchBlogPosts = (event, context, callback) => {
     if (!keyword || !username || !startTimestamp || !endTimestamp) {
         blogPostService.searchBlogPosts(keyword, username, startTimestamp, endTimestamp)
             .then(result => {
-                const blogPosts = [];
-                for (let hit of result.hits.hits) {
-                    const blogPost = {
-                        id: hit._id,
-                        username: hit._source.username,
-                        title: hit._source.title,
-                        timestamp: hit._source.timestamp
-                    };
-                    blogPosts.push(blogPost);
-                }
-                common.sendHttpResponse(200, blogPosts, callback);
+                common.sendHttpResponse(200, result, callback);
             })
             .catch(err => {
                 common.sendHttpResponse(500, err, callback);

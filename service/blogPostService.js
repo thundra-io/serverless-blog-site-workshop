@@ -7,6 +7,7 @@ const BLOG_POST_PROCESS_QUEUE_DELAY_SECONDS = parseInt(process.env.BLOG_POST_PRO
 const BLOG_POST_NOTIFICATION_TOPIC_ARN = process.env.BLOG_POST_NOTIFICATION_TOPIC_ARN;
 const BLOG_POST_ES_HOST_NAME = process.env.BLOG_POST_ES_HOST_NAME;
 const BLOG_POST_ES_HOST_PORT = parseInt(process.env.BLOG_POST_ES_HOST_PORT || '80');
+const BLOG_POST_ES_INDEX_IDENTIFIER = process.env.BLOG_POST_ES_INDEX_IDENTIFIER;
 
 const WHITE_SPACE_REGEX = new RegExp("\\s+");
 const BANNED_BLOG_POST_WORDS = new Set(['server']);
@@ -130,7 +131,7 @@ module.exports.saveBlogPostToIndex = (blogPost) => {
     console.log('Indexing blog post: ' + JSON.stringify(blogPost));
 
     return esClient.index({
-            index: 'blogpost',
+            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
             type: '_doc',
             id: blogPost.id,
             body: {
@@ -147,7 +148,7 @@ module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     console.log('Deleting blog post with id=' + blogPostId);
 
     return esClient.delete({
-            index: 'blogpost',
+            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
             type: '_doc',
             id: blogPostId
     });
@@ -203,8 +204,10 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
             }
         });
     }
-    return esClient.search({
-            index: 'blogpost',
+
+    return new Promise((resolve, reject) => {
+        esClient.search({
+            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
             type: '_doc',
             body: {
                 size: 10000,
@@ -221,5 +224,20 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
                     }
                 ]
             }
+        }).then(result => {
+            const blogPosts = [];
+            for (let hit of result.hits.hits) {
+                const blogPost = {
+                    id: hit._id,
+                    username: hit._source.username,
+                    title: hit._source.title,
+                    timestamp: hit._source.timestamp
+                };
+                blogPosts.push(blogPost);
+            }
+            resolve(blogPosts);
+        }).catch(err => {
+            reject(err);
+        });
     });
 };
