@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.358.0",
-    "@thundra/core": "^2.4.1",
+    "@thundra/core": "^2.5.3",
     "serverless-plugin-thundra-lambda-adapters-cw": "^1.0.2"
   }
 }
