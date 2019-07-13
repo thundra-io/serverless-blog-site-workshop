@@ -1,0 +1,25 @@
+PUT _template/templateblogpost
+{
+    "template": "blogpost-*",
+    "settings": {
+      "number_of_shards": 1
+    },
+    "mappings": {
+      "_doc": {
+        "properties": {
+            "post": {
+              "type": "text"
+            },
+            "timestamp": {
+              "type": "long"
+            },
+            "phoneNumber": {
+              "type": "keyword"
+            },
+            "username": {
+              "type": "keyword"
+            }
+        }
+      }
+    }
+}
