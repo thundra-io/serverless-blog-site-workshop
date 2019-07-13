@@ -25,7 +25,7 @@ module.exports.postBlogPost = (event, context, callback) => {
 			const message = {
 				postId: blogPost.id
 			};
-			common.sendHttpResponse(200, message, callback);
+			common.sendHttpResponse(202, message, callback);
 		})
 		.catch(err => {
         	common.sendHttpResponse(500, err, callback);
@@ -50,7 +50,7 @@ module.exports.getBlogPost = (event, context, callback) => {
                     if (result.Item.phoneNumber) {
                         blogPost.phoneNumber = result.Item.phoneNumber.S;
                     }
-                    common.sendHttpResponse(202, blogPost, callback);
+                    common.sendHttpResponse(200, blogPost, callback);
                 } else {
                     common.sendHttpResponse(404, 'NOT FOUND', callback);
                 }
