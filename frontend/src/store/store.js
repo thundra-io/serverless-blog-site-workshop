@@ -12,7 +12,9 @@ const persistConfig = {
         'searchBlog',
         'getBlog',
         'addBlog',
-        'deleteBlog'
+        'deleteBlog',
+        'reviewBlog',
+        'publishBlog'
     ]
 }
 const persistedReducer = persistReducer(persistConfig, reducer);

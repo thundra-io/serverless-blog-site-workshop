@@ -39,7 +39,7 @@ export const addBlogAction = (title, post, username, phoneNumber) => {
 
     return function (dispatch, getState) {
 
-        const url = `${getState().globalUrl.urlText}`;
+        const url = `${getState().globalUrl.urlText}/post`;
         // console.log("addBlogAction; url: ", url);
         // console.log("addBlogAction; newPost: ", JSON.stringify(newPost));
 

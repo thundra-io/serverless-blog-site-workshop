@@ -9,7 +9,9 @@ import { Grid } from 'semantic-ui-react'
 import {
   UrlHolderContainer,
   MenuButtonsContainer,
-  BlogListContainer,
+  ApprovedBlogListContainer,
+  ReviewedBlogListContainer,
+  PublishedBlogListContainer,
   AddBlogContainer,
 } from "./containers";
 
@@ -30,12 +32,24 @@ export default class App extends React.Component {
         });
     }
 
-    selectListBlogMenu = () => {
+    selectListApprovedBlogMenu = () => {
         this.setState({
-            selectedMenu: menuItems.LIST_BLOG
+            selectedMenu: menuItems.LIST_APPROVED_BLOG
         });
 	}
-	
+
+    selectListReviewedBlogMenu = () => {
+        this.setState({
+            selectedMenu: menuItems.LIST_REVIEWED_BLOG
+        });
+    }
+
+    selectListPublishedBlogMenu = () => {
+        this.setState({
+            selectedMenu: menuItems.LIST_PUBLISHED_BLOG
+        });
+    }
+
 	renderSelectedMenu = () => {
 		const {selectedMenu} = this.state;
 		
@@ -44,10 +58,18 @@ export default class App extends React.Component {
 				return (
 					<AddBlogContainer />
 				)
-			case menuItems.LIST_BLOG:
+			case menuItems.LIST_APPROVED_BLOG:
 				return (
-					<BlogListContainer />
+					<ApprovedBlogListContainer />
 				)
+            case menuItems.LIST_REVIEWED_BLOG:
+                return (
+                    <ReviewedBlogListContainer />
+            )
+            case menuItems.LIST_PUBLISHED_BLOG:
+                return (
+                    <PublishedBlogListContainer />
+            )
 			default:
 				return (
 					<div>default</div>
@@ -70,7 +92,9 @@ export default class App extends React.Component {
 									<MenuButtonsContainer 
 										selectedMenu={this.state.selectedMenu}
 										selectAddBlogMenu={this.selectAddBlogMenu}
-										selectListBlogMenu={this.selectListBlogMenu}
+										selectListApprovedBlogMenu={this.selectListApprovedBlogMenu}
+        								selectListReviewedBlogMenu={this.selectListReviewedBlogMenu}
+        								selectListPublishedBlogMenu={this.selectListPublishedBlogMenu}
 									/>
 									
 								</Grid.Column>
@@ -88,5 +112,7 @@ export default class App extends React.Component {
 
 export const menuItems = {
     ADD_BLOG: "add_blog",
-    LIST_BLOG: "list_blog"
+    LIST_APPROVED_BLOG: "list_approved_blog",
+    LIST_REVIEWED_BLOG: "list_reviewed_blog",
+    LIST_PUBLISHED_BLOG: "list_published_blog"
 };

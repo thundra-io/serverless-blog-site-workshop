@@ -26,7 +26,7 @@ export const receive_blogs_error = (err) => {
     };
 };
 
-export const searchBlogsAction = (keyword, username, startDate, endDate) => {
+export const searchBlogsAction = (keyword, username, startDate, endDate, state) => {
 
     store.dispatch(fetch_blogs());
 
@@ -39,7 +39,7 @@ export const searchBlogsAction = (keyword, username, startDate, endDate) => {
         const startTimestamp = new Date(startDate).getTime();
         const endTimestamp = new Date(endDate).getTime();
 
-        const url = `${getState().globalUrl.urlText}/search?keyword=${keyword}&username=${username}&start-timestamp=${startTimestamp}&end-timestamp=${endTimestamp}`;
+        const url = `${getState().globalUrl.urlText}/search?keyword=${keyword}&username=${username}&start-timestamp=${startTimestamp}&end-timestamp=${endTimestamp}&state=${state}`;
         // console.log("searchBlogsAction; url: ", url);
 
         return fetch(`${url}`)

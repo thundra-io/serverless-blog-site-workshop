@@ -8,7 +8,7 @@ import {getBlogAction} from "../../store/actions/getBlog";
 
 
 function mapStateToProps(store) {
-    // console.log("BlogListContainer; store: ", store);
+    // console.log("ReviewedBlogListContainer; store: ", store);
     return {
         searchedBlogs: store.searchBlog,
         clickedBlog: store.getBlog,
@@ -20,7 +20,7 @@ function mapDispatchToProps(dispatch) {
     return {
 
         searchBlogs (keyword, username, startTimestamp, endTimestamp) {
-            dispatch(searchBlogsAction(keyword, username, startTimestamp, endTimestamp));
+            dispatch(searchBlogsAction(keyword, username, startTimestamp, endTimestamp, 'REVIEWED'));
         },
         deleteBlog (blogId) {
             dispatch(deleteBlogAction(blogId));
@@ -32,5 +32,5 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-const BlogListContainer = connect(mapStateToProps, mapDispatchToProps)(BlogList);
-export default BlogListContainer;
+const ReviewedBlogListContainer = connect(mapStateToProps, mapDispatchToProps)(BlogList);
+export default ReviewedBlogListContainer;
