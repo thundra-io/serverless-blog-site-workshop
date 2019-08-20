@@ -5,7 +5,7 @@ import {
 
 
 const initialState = {
-    urlText: "https://t8pqrt42ti.execute-api.eu-west-2.amazonaws.com/dev/blog",
+    urlText: "https://s2paaifklb.execute-api.eu-north-1.amazonaws.com/dev/blog",
     // urlText: "",
     isUrlLocked: false, // default: false
 };
