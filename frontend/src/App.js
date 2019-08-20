@@ -22,7 +22,7 @@ export default class App extends React.Component {
         super(props);
 
         this.state = {
-            selectedMenu: menuItems.LIST_BLOG // default: LIST_BLOG
+            selectedMenu: menuItems.LIST_APPROVED_BLOG // default: LIST_APPROVED_BLOG
         }
     }
 
