@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Modal, Loader, Dimmer, Table, Icon, Button, Popup, Form} from 'semantic-ui-react';
+import { Modal, Loader, Dimmer, Table, Icon, Button, Popup, Form, TextArea} from 'semantic-ui-react';
 import DatePicker from "react-datepicker";
 import "./BlogList.css"
 
@@ -12,11 +12,15 @@ class BlogList extends Component {
     }
 
     initializeState = () => {
+        // console.log("BlogList, intitializeState")
         const endDate = new Date();
         const startDate = new Date(endDate.getTime() - 604800000); // this is one week ago.
 
         return {
             isBlogModalOpen: false,
+            isReviewBlogModalOpen: false,
+            isPublishBlogModalOpen: false,
+            reviewBlogModalPost: "",
             searchUsername: "",
             searchKeyword: "", // title or post
             searchTimeStart: startDate,
@@ -28,12 +32,28 @@ class BlogList extends Component {
         this.fetchSearchBlogs();
     }
 
+    static getDerivedStateFromProps(props, state) {
+        // if (props.clickedBlog.blogData.post !== state.reviewBlogModalPost && state.renderReviewBlogModal === "") {
+        if (props.clickedBlog.blogData.post !== state.reviewBlogModalPost) {
+            console.log("getDerivedStateFromProps; props, state: ", props, state);
+            return {
+                reviewBlogModalPost: props.clickedBlog.blogData.post
+                // reviewBlogModalPost: state.reviewBlogModalPost
+            }
+        }
+
+        return null;
+    }
+
     fetchSearchBlogs = () => {
         const {searchKeyword, searchUsername, searchTimeStart, searchTimeEnd} = this.state
-        this.props.searchBlogs(searchKeyword, searchUsername, searchTimeStart, searchTimeEnd);
+        const {blogState} = this.props;
+        this.props.searchBlogs(searchKeyword, searchUsername, searchTimeStart, searchTimeEnd, blogState);
     }
 
     componentDidUpdate(prevProps) {
+        // console.log("BlogList, CDU; props, prevProps: ", this.props, prevProps);
+
         if (prevProps.deletedBlog.isDeleteBlogFetching &&
             this.props.deletedBlog.isDeleteBlogFetching !== prevProps.deletedBlog.isDeleteBlogFetching
         ) {
@@ -43,12 +63,36 @@ class BlogList extends Component {
                 this.fetchSearchBlogs();
             }, 2000);
         }
+
+        // Fetch blogs if blogState changes.
+        if (prevProps.blogState !== this.props.blogState) {
+            this.fetchSearchBlogs();
+        }
     }
 
     handleBlogItemClick = (blog) => {
         console.log("handleBlogItemClick; blog: ", blog);
         this.setState({
             isBlogModalOpen: true
+        });
+        this.props.getBlog(blog.id);
+    }
+
+    handleReviewBlogIconClick = (e,blog) => {
+        e.stopPropagation(); // this is to prevent blogItemClick instead of review icon click.
+        console.log("handleReviewBlogIconClick; blog: ", blog);
+        this.setState({
+            isReviewBlogModalOpen: true,
+            // reviewBlogModalPost: blog.post
+        });
+        this.props.getBlog(blog.id);
+    }
+
+    handlePublishBlogIconClick = (e,blog) => {
+        e.stopPropagation(); // this is to prevent blogItemClick instead of review icon click.
+        console.log("handleReviewBlogIconClick; blog: ", blog);
+        this.setState({
+            isPublishBlogModalOpen: true,
         });
         this.props.getBlog(blog.id);
     }
@@ -77,6 +121,41 @@ class BlogList extends Component {
                     <Table.Cell
                         textAlign="right"
                     >
+                        { this.props.blogState === "APPROVED" &&
+                            <Popup
+                                content={`Review post by ${blog.username}`}
+                                trigger={
+                                    <Button 
+                                        icon
+                                        compact
+                                        size='mini'
+                                        // onClick={(e) => console.log("edit clicked; e: ", e)}
+                                        onClick={(e) => this.handleReviewBlogIconClick(e, blog)}
+                                    >
+                                        <Icon name='edit outline' />
+                                    </Button>
+                                }
+                            />
+                        }
+
+                        { this.props.blogState === "REVIEWED" &&
+                            <Popup
+                                content={`Publish post by ${blog.username}`}
+                                trigger={
+                                    <Button 
+                                        icon
+                                        compact
+                                        size='mini'
+                                        // onClick={(e) => console.log("edit clicked; e: ", e)}
+                                        onClick={(e) => this.handlePublishBlogIconClick(e, blog)}
+                                    >
+                                        <Icon name='paper plane outline' />
+                                    </Button>
+                                }
+                            />
+                        }
+                        
+
                         <Popup
                             content={`Delete post by ${blog.username}`}
                             trigger={
@@ -128,7 +207,7 @@ class BlogList extends Component {
             >
                 <Modal.Header>{blogData.title}</Modal.Header>
                 <Modal.Content>
-                                      
+
                     <Modal.Description>
                         <p>{blogData.post}</p>
                         <p>Author: {blogData.username}</p>
@@ -137,6 +216,107 @@ class BlogList extends Component {
                     </Modal.Description>
                     
                 </Modal.Content>
+            </Modal>
+        );
+    }
+
+    renderReviewBlogModal = () => {
+
+        const {blogData} = this.props.clickedBlog;
+        console.log("renderReviewBlogModal; blogData, state: ", blogData, this.state);
+        const blogTime = new Date(blogData.timestamp).toDateString();
+
+        return (
+            <Modal
+                open={this.state.isReviewBlogModalOpen}
+                centered={false}
+                onClose={() => this.setState({isReviewBlogModalOpen: false})}
+            >
+                <Modal.Header>{blogData.title}</Modal.Header>
+                <Modal.Content>
+                    <Form>
+                        <Form.TextArea 
+                            rows={5}
+                            placeholder='Tell us more' 
+                            // name="reviewBlogModalPost"
+                            value={this.state.reviewBlogModalPost}
+                            // onChange={this.handleChange}
+
+                            // onInput={(e,data) => {
+                            onChange={(e,data) => {
+                                console.log("text area; e, data: ", e, data);
+                                this.setState({
+                                    reviewBlogModalPost: data.value
+                                    // reviewBlogModalPost: e.target.vaule
+                                });
+                                // postData = data.value;
+                            }}
+                        />   
+                    </Form>
+                    <Modal.Description>
+                        <p>Author: {blogData.username}</p>
+                        <p>Phone: {blogData.phoneNumber}</p>
+                        <p>Date: {blogTime}</p>
+                    </Modal.Description>
+                    
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={() => this.setState({isReviewBlogModalOpen: false})}>
+                        Close
+                    </Button>
+                    <Button
+                        positive
+                        icon='checkmark'
+                        labelPosition='right'
+                        content="Accept Post"
+                        onClick={() => {
+                            this.props.reviewBlog(blogData.id, this.state.reviewBlogModalPost);
+                            this.setState({isReviewBlogModalOpen: false});
+                        }}
+                    />
+                </Modal.Actions>
+            </Modal>
+        );
+    }
+
+    renderPublishBlogModal = () => {
+
+        const {blogData} = this.props.clickedBlog;
+        console.log("renderPublishBlogModal; blogData, state: ", blogData, this.state);
+        const blogTime = new Date(blogData.timestamp).toDateString();
+
+        return (
+            <Modal
+                open={this.state.isPublishBlogModalOpen}
+                centered={false}
+                onClose={() => this.setState({isPublishBlogModalOpen: false})}
+            >
+                <Modal.Header>Are you sure to publish blog?</Modal.Header>
+                <Modal.Content>
+                    
+                    <Modal.Description>
+                        <p>Title: {blogData.title}</p>
+                        <p>Author: {blogData.username}</p>
+                        <p>Phone: {blogData.phoneNumber}</p>
+                        <p>Date: {blogTime}</p>
+                    </Modal.Description>
+                    
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={() => this.setState({isPublishBlogModalOpen: false})}>
+                        Close
+                    </Button>
+                    <Button
+                        positive
+                        icon='checkmark'
+                        labelPosition='right'
+                        content="Publish"
+                        onClick={() => {
+                            this.props.publishBlog(blogData.id);
+                            this.setState({isPublishBlogModalOpen: false});
+                        }}
+                    />
+                </Modal.Actions>
             </Modal>
         );
     }
@@ -240,7 +420,7 @@ class BlogList extends Component {
     }
 
     render() {
-        // console.log("BlogList; props: ", this.props);
+        console.log("BlogList; props, state: ", this.props, this.state);
         const {isBlogDataFetching} = this.props.clickedBlog;
 
         return (
@@ -253,7 +433,11 @@ class BlogList extends Component {
                         <Dimmer inverted active>
                             <Loader>Loading</Loader>
                         </Dimmer>:
-                        this.renderBlogModal()
+                        <>
+                            {this.renderBlogModal()}
+                            {this.renderReviewBlogModal()}
+                            {this.renderPublishBlogModal()}
+                        </>
                     }
                     {this.renderBlogListTable()}
                 </div>

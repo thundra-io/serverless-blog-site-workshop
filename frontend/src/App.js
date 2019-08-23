@@ -10,8 +10,8 @@ import {
   UrlHolderContainer,
   MenuButtonsContainer,
   ApprovedBlogListContainer,
-  ReviewedBlogListContainer,
-  PublishedBlogListContainer,
+  ReviewedBlogListContainer, // TODO: delete
+  PublishedBlogListContainer, // TODO: delete
   AddBlogContainer,
 } from "./containers";
 
@@ -60,16 +60,24 @@ export default class App extends React.Component {
 				)
 			case menuItems.LIST_APPROVED_BLOG:
 				return (
-					<ApprovedBlogListContainer />
+					<ApprovedBlogListContainer 
+						blogState="APPROVED"
+					/>
 				)
             case menuItems.LIST_REVIEWED_BLOG:
                 return (
-                    <ReviewedBlogListContainer />
-            )
+					// <ReviewedBlogListContainer />
+					<ApprovedBlogListContainer 
+						blogState="REVIEWED"
+					/>
+            	)
             case menuItems.LIST_PUBLISHED_BLOG:
                 return (
-                    <PublishedBlogListContainer />
-            )
+					// <PublishedBlogListContainer />
+					<ApprovedBlogListContainer 
+						blogState="PUBLISHED"
+					/>
+            	)
 			default:
 				return (
 					<div>default</div>

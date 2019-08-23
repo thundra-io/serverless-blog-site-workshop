@@ -70,6 +70,7 @@ class UrlHolder extends Component {
     }
 
     render() {
+        console.log("UrlHolder, render; props, state: ", this.props, this.state);
         return (
 
             <div className="url-holder">
@@ -77,7 +78,6 @@ class UrlHolder extends Component {
                     <Grid.Row 
                         // verticalAlign={"middle"}
                     >
-
                         <Grid.Column width={2}>
                             {this.renderLockButton()}
 						</Grid.Column>

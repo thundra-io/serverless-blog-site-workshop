@@ -26,6 +26,7 @@ export const receive_review_blog_error = (err) => {
     };
 };
 
+// post; is the body of the updated/reviewed post as the plain string.
 export const reviewBlogAction = (blogId, post) => {
 
     store.dispatch(review_blog());
@@ -39,7 +40,7 @@ export const reviewBlogAction = (blogId, post) => {
         return fetch(`${url}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: post
+            body: JSON.stringify(post) // convert to json here. or wrap string with extra quotes.
         })
             .then(data => data.json())
             .then(data => {
