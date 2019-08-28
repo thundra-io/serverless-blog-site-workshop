@@ -35,7 +35,7 @@ export const reviewBlogAction = (blogId, post) => {
 
         const url = `${getState().globalUrl.urlText}/review/${blogId}`;
         // console.log("reviewBlogAction; url: ", url);
-        // console.log("reviewBlogAction; post: ", JSON.stringify(post));
+        console.log("reviewBlogAction; post: ", JSON.stringify(post));
 
         return fetch(`${url}`, {
             method: 'POST',

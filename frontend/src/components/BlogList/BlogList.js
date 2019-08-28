@@ -8,11 +8,11 @@ class BlogList extends Component {
     constructor(props) {
         super(props);
 
-        this.state = this.initializeState();
+        this.state = this.initializeState(props);
     }
 
-    initializeState = () => {
-        // console.log("BlogList, intitializeState")
+    initializeState = (props) => {
+        console.log("BlogList, intitializeState; props: ", props);
         const endDate = new Date();
         const startDate = new Date(endDate.getTime() - 604800000); // this is one week ago.
 
@@ -21,6 +21,7 @@ class BlogList extends Component {
             isReviewBlogModalOpen: false,
             isPublishBlogModalOpen: false,
             reviewBlogModalPost: "",
+            // reviewBlogModalPost: this.props.clickedBlog.blogData.post,
             searchUsername: "",
             searchKeyword: "", // title or post
             searchTimeStart: startDate,
@@ -34,8 +35,13 @@ class BlogList extends Component {
 
     static getDerivedStateFromProps(props, state) {
         // if (props.clickedBlog.blogData.post !== state.reviewBlogModalPost && state.renderReviewBlogModal === "") {
-        if (props.clickedBlog.blogData.post !== state.reviewBlogModalPost) {
+        // if (state.reviewBlogModalPost === "" && props.clickedBlog.blogData.post !== state.reviewBlogModalPost) {
+        if (props.clickedBlog.blogData.post && props.clickedBlog.blogData.post !== state.reviewBlogModalPost) {
             console.log("getDerivedStateFromProps; props, state: ", props, state);
+            if (state.reviewBlogModalPost !== "") {
+                return null;
+            }
+
             return {
                 reviewBlogModalPost: props.clickedBlog.blogData.post
                 // reviewBlogModalPost: state.reviewBlogModalPost
@@ -230,7 +236,10 @@ class BlogList extends Component {
             <Modal
                 open={this.state.isReviewBlogModalOpen}
                 centered={false}
-                onClose={() => this.setState({isReviewBlogModalOpen: false})}
+                onClose={() => this.setState({
+                    isReviewBlogModalOpen: false,
+                    reviewBlogModalPost: ""
+                })}
             >
                 <Modal.Header>{blogData.title}</Modal.Header>
                 <Modal.Content>
@@ -261,7 +270,12 @@ class BlogList extends Component {
                     
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button onClick={() => this.setState({isReviewBlogModalOpen: false})}>
+                    <Button onClick={() => {
+                        this.setState({
+                            isReviewBlogModalOpen: false,
+                            reviewBlogModalPost: ""
+                        })
+                    }}>
                         Close
                     </Button>
                     <Button
