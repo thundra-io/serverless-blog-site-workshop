@@ -3,7 +3,8 @@ import store from "../store";
 import {
     FETCH_BLOG_STARTED,
     FETCH_BLOG_SUCCEEDED,
-    FETCH_BLOG_REJECTED
+    FETCH_BLOG_REJECTED,
+    SET_BLOG_POST
 } from "../constants";
 
 export const fetch_blog = () => {
@@ -37,9 +38,16 @@ export const getBlogAction = (blogId) => {
         return fetch(`${url}`)
             .then(data => data.json())
             .then(data => {
-                // console.log("getBlogAction; data, getState: ", data, getState());
+                console.log("getBlogAction; data, getState: ", data, getState());
                 dispatch(receive_blog(data))
             })
             .catch(err => dispatch(receive_blog_error(err)));
     };
 };
+
+export const setBlogPostAction = (post) => {
+    return {
+        type: SET_BLOG_POST,
+        data: post
+    }
+}

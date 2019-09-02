@@ -1,7 +1,8 @@
 import {
     FETCH_BLOG_STARTED,
     FETCH_BLOG_SUCCEEDED,
-    FETCH_BLOG_REJECTED
+    FETCH_BLOG_REJECTED,
+    SET_BLOG_POST
 } from "../constants";
 
 
@@ -29,6 +30,13 @@ const getBlogReducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 isBlogDataError: true,
                 isBlogDataFetching: false
+            });
+        case SET_BLOG_POST:
+            return Object.assign({}, state, {
+                blogData: {
+                    ...state.blogData,
+                    post: action.data
+                }
             });
         default:
             return state;

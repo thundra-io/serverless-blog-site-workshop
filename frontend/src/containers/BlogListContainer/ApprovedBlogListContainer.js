@@ -6,7 +6,7 @@ import {searchBlogsAction} from "../../store/actions/searchBlog";
 import {reviewBlogAction} from "../../store/actions/reviewBlog";
 import {publishBlogAction} from "../../store/actions/publishBlog";
 import {deleteBlogAction} from "../../store/actions/deleteBlog";
-import {getBlogAction} from "../../store/actions/getBlog";
+import {getBlogAction, setBlogPostAction} from "../../store/actions/getBlog";
 
 
 function mapStateToProps(store) {
@@ -37,6 +37,9 @@ function mapDispatchToProps(dispatch) {
         getBlog (blogId) {
             dispatch(getBlogAction(blogId));
         },
+        setBlogPost (post) {
+            dispatch(setBlogPostAction(post))
+        }
 
     };
 }

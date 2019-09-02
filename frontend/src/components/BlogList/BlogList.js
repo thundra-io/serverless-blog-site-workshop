@@ -21,7 +21,6 @@ class BlogList extends Component {
             isReviewBlogModalOpen: false,
             isPublishBlogModalOpen: false,
             reviewBlogModalPost: "",
-            // reviewBlogModalPost: this.props.clickedBlog.blogData.post,
             searchUsername: "",
             searchKeyword: "", // title or post
             searchTimeStart: startDate,
@@ -34,17 +33,11 @@ class BlogList extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        // if (props.clickedBlog.blogData.post !== state.reviewBlogModalPost && state.renderReviewBlogModal === "") {
-        // if (state.reviewBlogModalPost === "" && props.clickedBlog.blogData.post !== state.reviewBlogModalPost) {
         if (props.clickedBlog.blogData.post && props.clickedBlog.blogData.post !== state.reviewBlogModalPost) {
             console.log("getDerivedStateFromProps; props, state: ", props, state);
-            if (state.reviewBlogModalPost !== "") {
-                return null;
-            }
 
             return {
                 reviewBlogModalPost: props.clickedBlog.blogData.post
-                // reviewBlogModalPost: state.reviewBlogModalPost
             }
         }
 
@@ -89,7 +82,6 @@ class BlogList extends Component {
         console.log("handleReviewBlogIconClick; blog: ", blog);
         this.setState({
             isReviewBlogModalOpen: true,
-            // reviewBlogModalPost: blog.post
         });
         this.props.getBlog(blog.id);
     }
@@ -238,7 +230,6 @@ class BlogList extends Component {
                 centered={false}
                 onClose={() => this.setState({
                     isReviewBlogModalOpen: false,
-                    reviewBlogModalPost: ""
                 })}
             >
                 <Modal.Header>{blogData.title}</Modal.Header>
@@ -247,18 +238,11 @@ class BlogList extends Component {
                         <Form.TextArea 
                             rows={5}
                             placeholder='Tell us more' 
-                            // name="reviewBlogModalPost"
                             value={this.state.reviewBlogModalPost}
-                            // onChange={this.handleChange}
-
-                            // onInput={(e,data) => {
                             onChange={(e,data) => {
                                 console.log("text area; e, data: ", e, data);
-                                this.setState({
-                                    reviewBlogModalPost: data.value
-                                    // reviewBlogModalPost: e.target.vaule
-                                });
-                                // postData = data.value;
+                                // This is to set blog data property.
+                                this.props.setBlogPost(data.value);
                             }}
                         />   
                     </Form>
@@ -273,7 +257,6 @@ class BlogList extends Component {
                     <Button onClick={() => {
                         this.setState({
                             isReviewBlogModalOpen: false,
-                            reviewBlogModalPost: ""
                         })
                     }}>
                         Close
