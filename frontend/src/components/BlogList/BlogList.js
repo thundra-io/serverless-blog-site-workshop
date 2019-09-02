@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Modal, Loader, Dimmer, Table, Icon, Button, Popup, Form, TextArea} from 'semantic-ui-react';
+import { Modal, Loader, Dimmer, Table, Icon, Button, Popup, Form} from 'semantic-ui-react';
 import DatePicker from "react-datepicker";
 import "./BlogList.css"
 

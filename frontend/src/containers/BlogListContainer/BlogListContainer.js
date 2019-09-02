@@ -10,7 +10,7 @@ import {getBlogAction, setBlogPostAction} from "../../store/actions/getBlog";
 
 
 function mapStateToProps(store) {
-    // console.log("ApprovedBlogListContainer; store: ", store);
+    // console.log("BlogListContainer; store: ", store);
     return {
         searchedBlogs: store.searchBlog,
         clickedBlog: store.getBlog,
@@ -44,6 +44,5 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-// TODO: change name to blog list again, drop approved.
-const ApprovedBlogListContainer = connect(mapStateToProps, mapDispatchToProps)(BlogList);
-export default ApprovedBlogListContainer;
+const BlogListContainer = connect(mapStateToProps, mapDispatchToProps)(BlogList);
+export default BlogListContainer;

@@ -9,9 +9,7 @@ import { Grid } from 'semantic-ui-react'
 import {
   UrlHolderContainer,
   MenuButtonsContainer,
-  ApprovedBlogListContainer,
-  ReviewedBlogListContainer, // TODO: delete
-  PublishedBlogListContainer, // TODO: delete
+  BlogListContainer,
   AddBlogContainer,
 } from "./containers";
 
@@ -60,21 +58,19 @@ export default class App extends React.Component {
 				)
 			case menuItems.LIST_APPROVED_BLOG:
 				return (
-					<ApprovedBlogListContainer 
+					<BlogListContainer 
 						blogState="APPROVED"
 					/>
 				)
             case menuItems.LIST_REVIEWED_BLOG:
                 return (
-					// <ReviewedBlogListContainer />
-					<ApprovedBlogListContainer 
+					<BlogListContainer 
 						blogState="REVIEWED"
 					/>
             	)
             case menuItems.LIST_PUBLISHED_BLOG:
                 return (
-					// <PublishedBlogListContainer />
-					<ApprovedBlogListContainer 
+					<BlogListContainer 
 						blogState="PUBLISHED"
 					/>
             	)
