@@ -14,19 +14,22 @@ Service Information
 service: blog-site
 ...
 endpoints:
-  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog
+  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/post
+  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/review/{blogPostId}
+  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/publish/{blogPostId}
   DELETE - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/{blogPostId}
   GET - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/{blogPostId}
   GET - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/search
 ...
 ```
+
 Note that `<api-id>` part of the endpoints is unique to every one and created API.
 
 ## Endpoints
 
 ### Send blog post
 This is the endpoint for sending blog post which is shown as 
-`POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog` 
+`POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/post/{blogPostId}` 
 in the deploy output as shown in the `Install` section above. 
 - Its HTTP method type is `POST`.
 - It gets blog post information in the request body in JSON format as shown below:
@@ -39,6 +42,30 @@ in the deploy output as shown in the `Install` section above.
 }
 ```
 **Note:** `phoneNumber` is optional.
+
+### Review blog post
+This is the endpoint for reviewing blog post which is shown as 
+`POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/review` 
+in the deploy output as shown in the `Install` section above. 
+- Its HTTP method type is `POST`.
+- It gets blog post id to be reviewed as path parameter:
+```
+https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/review/1234-5678-90
+```
+- It gets reviewed blog post content in the request body in String format as shown below:
+```
+"<reviewed content of the blog post>"
+```
+
+### Publish blog post
+This is the endpoint for publishing blog post which is shown as 
+`POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/publish` 
+in the deploy output as shown in the `Install` section above. 
+- Its HTTP method type is `POST`.
+- It gets blog post id to be published as path parameter:
+```
+https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/publish/1234-5678-90
+```
 
 ### Search blog post
 This is the endpoint for searching according to given criteria in the blog posts which is shown as  
