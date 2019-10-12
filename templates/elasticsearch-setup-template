@@ -18,6 +18,9 @@ PUT _template/templateblogpost
             },
             "username": {
               "type": "keyword"
+            },
+            "state": {
+              "type": "keyword"
             }
         }
       }
