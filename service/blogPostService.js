@@ -48,7 +48,41 @@ module.exports.getBlogPost = (id) => {
             'id': {S: id}
         }
     };
-    return dynamodb.getItem(params).promise()
+    return dynamodb.getItem(params).promise();
+};
+
+module.exports.updateBlogPost = (id, post, state, prevState) => {
+    console.log('Updating blog post with id: ' + id);
+
+    const attributeUpdates = { };
+    if (post) {
+        attributeUpdates['post'] = {
+            Action: 'PUT',
+            Value: {S: post}
+        }
+    }
+    if (state) {
+        attributeUpdates['state'] = {
+            Action: 'PUT',
+            Value: {S: state}
+        }
+    }
+
+    const params = {
+        TableName: BLOG_POST_TABLE_NAME,
+        Key: {
+            'id': {S: id}
+        },
+        AttributeUpdates: attributeUpdates,
+        Expected: {
+            'state': {
+                ComparisonOperator: "EQ",
+                Value: {S: prevState}
+            }
+        },
+        ReturnValues: 'ALL_NEW'
+    };
+    return dynamodb.updateItem(params).promise();
 };
 
 module.exports.saveBlogPost = (blogPost) => {
@@ -62,6 +96,7 @@ module.exports.saveBlogPost = (blogPost) => {
             'post': {S: blogPost.post},
             'username': {S: blogPost.username},
             'timestamp': {N: blogPost.timestamp.toString()},
+            'state': {S: blogPost.state}
         }
     };
     if (blogPost.phoneNumber && blogPost.phoneNumber.length > 0) {
@@ -77,7 +112,8 @@ module.exports.deleteBlogPost = (blogPostId) => {
         TableName: BLOG_POST_TABLE_NAME,
         Key: {
             'id': {S: blogPostId}
-        }
+        },
+        ReturnValues: 'ALL_OLD'
     };
     return dynamodb.deleteItem(params).promise();
 };
@@ -90,6 +126,7 @@ module.exports.sendBlogPostMessage = (blogPost) => {
         QueueUrl: BLOG_POST_PROCESS_QUEUE_URL,
         DelaySeconds: BLOG_POST_PROCESS_QUEUE_DELAY_SECONDS,
     };
+
     return sqs.sendMessage(params).promise();
 };
 
@@ -140,6 +177,7 @@ module.exports.saveBlogPostToIndex = (blogPost) => {
                 "username": blogPost.username,
                 "phoneNumber": blogPost.phoneNumber,
                 "timestamp": blogPost.timestamp,
+                "state": blogPost.state
             }
     });
 };
@@ -154,7 +192,7 @@ module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     });
 };
 
-module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestamp) => {
+module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestamp, state) => {
     console.log('Searching blog posts for keyword=' + keyword + ', username=' + username +
                 ', startTimestamp=' + startTimestamp + ', endTimestamp=' + endTimestamp);
 
@@ -204,6 +242,15 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
             }
         });
     }
+    if (state) {
+        conditions.push({
+            term: {
+                "state": {
+                    "value": state
+                }
+            }
+        });
+    }
 
     return new Promise((resolve, reject) => {
         esClient.search({
@@ -231,7 +278,8 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
                     id: hit._id,
                     username: hit._source.username,
                     title: hit._source.title,
-                    timestamp: hit._source.timestamp
+                    timestamp: hit._source.timestamp,
+                    state: hit._source.state
                 };
                 blogPosts.push(blogPost);
             }

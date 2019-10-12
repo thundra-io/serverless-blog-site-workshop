@@ -52,11 +52,11 @@ provider:
   profile: default # or another profile
   # For Thundra integration
   layers:
-    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:16
+    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:26
   environment:
     # For Thundra integration
     thundra_apiKey: ${self:custom.thundraApiKey}
-    thundra_agent_lambda_trace_instrument_traceableConfig: service.blogPostService.*[traceArgs=true,traceReturnValue=true]
+    thundra_agent_lambda_trace_instrument_traceableConfig: service.blogPostService.*[traceArgs=true,traceReturnValue=true,traceLineByLine=true,traceLinesWithSource=true,traceLocalVariables=true]
     thundra_agent_lambda_report_cloudwatch_enable: true
   iamRoleStatements:
     - Effect: Allow
@@ -85,7 +85,29 @@ functions:
     events:
       - http:
           method: POST
-          path: blog
+          path: blog/post
+          cors: true
+  reviewBlogPost:
+    handler: blogApi.reviewBlogPost
+    environment:
+      BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
+      BLOG_POST_NOTIFICATION_TOPIC_ARN:
+        Ref: BlogPostNotificationTopic
+    events:
+      - http:
+          method: POST
+          path: blog/review/{blogPostId}
+          cors: true
+  publishBlogPost:
+    handler: blogApi.publishBlogPost
+    environment:
+      BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
+      BLOG_POST_NOTIFICATION_TOPIC_ARN:
+        Ref: BlogPostNotificationTopic
+    events:
+      - http:
+          method: POST
+          path: blog/publish/{blogPostId}
           cors: true
   deleteBlogPost:
     handler: blogApi.deleteBlogPost

@@ -1,3 +1,5 @@
+const thundra = require('@thundra/core');
+
 const blogPostService = require('./service/blogPostService');
 
 module.exports.handler = (event, context, callback) => {
@@ -6,19 +8,21 @@ module.exports.handler = (event, context, callback) => {
 	const records = event.Records;
 	const promises = [];
 	for (let record of records) {
-        if (record.eventName === 'INSERT') {
+        if (record.eventName === 'INSERT' || record.eventName === 'MODIFY') {
             const id = record.dynamodb.Keys.id.S;
             const title = record.dynamodb.NewImage.title.S;
             const post = record.dynamodb.NewImage.post.S;
             const username = record.dynamodb.NewImage.username.S;
             const phoneNumber = record.dynamodb.NewImage.phoneNumber ? record.dynamodb.NewImage.phoneNumber.S : null;
             const timestamp = parseInt(record.dynamodb.NewImage.timestamp.N);
+            const state = record.dynamodb.NewImage.state.S;
             const blogPost = {
                 id: id,
                 title: title,
                 post: post,
                 username: username,
                 timestamp: timestamp,
+                state: state
             };
             if (phoneNumber) {
                 blogPost.phoneNumber = phoneNumber;
