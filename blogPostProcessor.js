@@ -1,4 +1,4 @@
-const thundra = require('@thundra/core');
+// const thundra = require('@thundra/core');
 
 const blogPostService = require('./service/blogPostService');
 
@@ -15,7 +15,7 @@ module.exports.handler = async(event, context) => {
 		if (!rejectReason) {
             blogPost.state = 'SUBMITTED';
             const promise1 = blogPostService.saveBlogPost(blogPost);
-            thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPost.id + '::' + 'SUBMITTED');
+            // thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPost.id + '::' + 'SUBMITTED');
             promises.push(promise1);
             const promise2 =
                 blogPostService.publishBlogPostNotification(

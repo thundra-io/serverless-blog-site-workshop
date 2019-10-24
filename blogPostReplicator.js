@@ -1,4 +1,4 @@
-const thundra = require('@thundra/core');
+// const thundra = require('@thundra/core');
 
 const blogPostService = require('./service/blogPostService');
 
