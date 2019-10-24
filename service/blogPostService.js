@@ -254,7 +254,7 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
 
     return new Promise((resolve, reject) => {
         esClient.search({
-            index: 'blogpost' + BLOG_POST_ES_INDEX_IDENTIFIER,
+            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
             ignoreUnavailable: true,
             type: '_doc',
             body: {
