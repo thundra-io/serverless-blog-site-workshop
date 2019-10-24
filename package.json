@@ -13,7 +13,6 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@thundra/core": "^2.6.2",
     "aws-sdk": "^2.358.0",
     "serverless-plugin-thundra-lambda-adapters-cw": "^1.0.2"
   }

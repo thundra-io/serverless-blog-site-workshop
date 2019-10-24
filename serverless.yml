@@ -1,16 +1,10 @@
 service: blog-site
 
-plugins:
-  # For Thundra integration
-  - serverless-plugin-thundra-lambda-adapters-cw # npm install serverless-plugin-thundra-lambda-adapters-cw
-
 custom:
   blogPostProcessQueueName: BlogPostProcessQueue
   blogPostTableName: BlogPostTable
   blogPostNotificationTopicName: BlogPostNotificationTopic
   blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
-  # For Thundra integration
-  thundraApiKey: <YOUR-API-KEY-HERE>
 
 resources:
   Resources:
@@ -46,18 +40,9 @@ package:
 
 provider:
   name: aws
-  # For Thundra integration
-  runtime: provided #nodejs8.10
-  region: eu-west-2
-  profile: default # or another profile
-  # For Thundra integration
-  layers:
-    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:26
-  environment:
-    # For Thundra integration
-    thundra_apiKey: ${self:custom.thundraApiKey}
-    thundra_agent_lambda_trace_instrument_traceableConfig: service.blogPostService.*[traceArgs=true,traceReturnValue=true,traceLineByLine=true,traceLinesWithSource=true,traceLocalVariables=true]
-    thundra_agent_lambda_report_cloudwatch_enable: true
+  runtime: nodejs8.10
+  region: eu-north-1
+  profile: default
   iamRoleStatements:
     - Effect: Allow
       Action:
