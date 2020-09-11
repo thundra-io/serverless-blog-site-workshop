@@ -13,9 +13,9 @@ module.exports.handler = async(event, context) => {
         let hiMessage = 'Hi ' + blogPost.username;
 		const rejectReason = blogPostService.validateBlogPost(blogPost.post);
 		if (!rejectReason) {
-            blogPost.state = 'APPROVED';
+            blogPost.state = 'SUBMITTED';
             const promise1 = blogPostService.saveBlogPost(blogPost);
-            thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPost.id + '::' + 'APPROVED');
+            thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPost.id + '::' + 'SUBMITTED');
             promises.push(promise1);
             const promise2 =
                 blogPostService.publishBlogPostNotification(

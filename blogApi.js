@@ -41,9 +41,9 @@ module.exports.reviewBlogPost = (event, context, callback) => {
 
     const blogPostId = event.pathParameters && event.pathParameters.blogPostId;
     if (blogPostId !== null) {
-        thundra.InvocationTraceSupport.addIncomingTraceLink(blogPostId + '::' + 'APPROVED');
+        thundra.InvocationTraceSupport.addIncomingTraceLink(blogPostId + '::' + 'SUBMITTED');
         const post = JSON.parse(event.body);
-        blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'APPROVED')
+        blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'SUBMITTED')
             .then(result => {
                 if (result.Attributes) {
                     thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPostId + '::' + 'REVIEWED');
@@ -71,7 +71,7 @@ module.exports.reviewBlogPost = (event, context, callback) => {
             })
             .catch(err => {
                 if (err.code === 'ConditionalCheckFailedException') {
-                    common.sendHttpResponse(400, 'To review, blog post must be in \'APPROVED\' state!', callback);
+                    common.sendHttpResponse(400, 'To review, blog post must be in \'SUBMITTED\' state!', callback);
                 } else {
                     common.sendHttpResponse(500, err, callback);
                 }

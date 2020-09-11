@@ -11,10 +11,10 @@ class MenuButtons extends Component {
         return (
             <Button.Group vertical>
                 <Button 
-                    primary={selectedMenu === menuItems.LIST_APPROVED_BLOG}
-                    onClick={this.props.selectListApprovedBlogMenu}
+                    primary={selectedMenu === menuItems.LIST_SUBMITTED_BLOG}
+                    onClick={this.props.selectListSubmittedBlogMenu}
                 >
-                    List Approved Blogs
+                    List Submitted Blogs
                 </Button>
 
                 <Button

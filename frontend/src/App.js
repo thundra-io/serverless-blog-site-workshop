@@ -20,7 +20,7 @@ export default class App extends React.Component {
         super(props);
 
         this.state = {
-            selectedMenu: menuItems.LIST_APPROVED_BLOG // default: LIST_APPROVED_BLOG
+            selectedMenu: menuItems.LIST_SUBMITTED_BLOG // default: LIST_SUBMITTED_BLOG
         }
     }
 
@@ -30,9 +30,9 @@ export default class App extends React.Component {
         });
     }
 
-    selectListApprovedBlogMenu = () => {
+    selectListSubmittedBlogMenu = () => {
         this.setState({
-            selectedMenu: menuItems.LIST_APPROVED_BLOG
+            selectedMenu: menuItems.LIST_SUBMITTED_BLOG
         });
 	}
 
@@ -56,10 +56,10 @@ export default class App extends React.Component {
 				return (
 					<AddBlogContainer />
 				)
-			case menuItems.LIST_APPROVED_BLOG:
+			case menuItems.LIST_SUBMITTED_BLOG:
 				return (
 					<BlogListContainer 
-						blogState="APPROVED"
+						blogState="SUBMITTED"
 					/>
 				)
             case menuItems.LIST_REVIEWED_BLOG:
@@ -96,7 +96,7 @@ export default class App extends React.Component {
 									<MenuButtonsContainer 
 										selectedMenu={this.state.selectedMenu}
 										selectAddBlogMenu={this.selectAddBlogMenu}
-										selectListApprovedBlogMenu={this.selectListApprovedBlogMenu}
+										selectListSubmittedBlogMenu={this.selectListSubmittedBlogMenu}
         								selectListReviewedBlogMenu={this.selectListReviewedBlogMenu}
         								selectListPublishedBlogMenu={this.selectListPublishedBlogMenu}
 									/>
@@ -116,7 +116,7 @@ export default class App extends React.Component {
 
 export const menuItems = {
     ADD_BLOG: "add_blog",
-    LIST_APPROVED_BLOG: "list_approved_blog",
+    LIST_SUBMITTED_BLOG: "list_submitted_blog",
     LIST_REVIEWED_BLOG: "list_reviewed_blog",
     LIST_PUBLISHED_BLOG: "list_published_blog"
 };

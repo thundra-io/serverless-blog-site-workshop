@@ -119,7 +119,7 @@ class BlogList extends Component {
                     <Table.Cell
                         textAlign="right"
                     >
-                        { this.props.blogState === "APPROVED" &&
+                        { this.props.blogState === "SUBMITTED" &&
                             <Popup
                                 content={`Review post by ${blog.username}`}
                                 trigger={
