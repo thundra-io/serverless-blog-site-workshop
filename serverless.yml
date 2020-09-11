@@ -40,8 +40,8 @@ package:
 
 provider:
   name: aws
-  runtime: nodejs8.10
-  region: eu-north-1
+  runtime: nodejs12.x
+  region: eu-west-1
   profile: default
   iamRoleStatements:
     - Effect: Allow
