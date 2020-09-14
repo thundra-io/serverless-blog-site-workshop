@@ -42,6 +42,8 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: eu-west-1
+  environment:
+    THUNDRA_APIKEY: <YOUR-THUNDRA-API-KEY-HERE>
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -59,6 +61,9 @@ provider:
       Action:
         - sns:Publish
       Resource: "*" #arn:aws:sns:${self:provider.region}:*:${self:custom.blogPostNotificationTopicName}
+
+plugins:
+  - serverless-plugin-thundra
 
 functions:
   postBlogPost:
