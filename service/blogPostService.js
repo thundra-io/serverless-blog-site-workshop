@@ -168,7 +168,7 @@ module.exports.saveBlogPostToIndex = (blogPost) => {
     console.log('Indexing blog post: ' + JSON.stringify(blogPost));
 
     return esClient.index({
-            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
+            index: 'blogpost' + BLOG_POST_ES_INDEX_IDENTIFIER,
             type: '_doc',
             id: blogPost.id,
             body: {
