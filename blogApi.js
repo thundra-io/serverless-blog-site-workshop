@@ -43,7 +43,7 @@ module.exports.reviewBlogPost = (event, context, callback) => {
     if (blogPostId !== null) {
         // thundra.InvocationTraceSupport.addIncomingTraceLink(blogPostId + '::' + 'SUBMITTED');
         const post = JSON.parse(event.body);
-        blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'SUBMITTED')
+        blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'SUBMITED')
             .then(result => {
                 if (result.Attributes) {
                     // thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPostId + '::' + 'REVIEWED');
