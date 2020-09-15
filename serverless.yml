@@ -57,10 +57,6 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.blogPostTableName}
-    - Effect: Allow
-      Action:
-        - sns:Publish
-      Resource: "*" #arn:aws:sns:${self:provider.region}:*:${self:custom.blogPostNotificationTopicName}
 
 plugins:
   - serverless-plugin-thundra
