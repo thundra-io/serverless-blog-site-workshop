@@ -1,4 +1,4 @@
-// const thundra = require('@thundra/core');
+const thundra = require('@thundra/core');
 
 const common = require('./common');
 const blogPostService = require('./service/blogPostService');
@@ -19,7 +19,7 @@ module.exports.postBlogPost = (event, context, callback) => {
             timestamp: Date.now()
         };
 
-        // thundra.InvocationSupport.setTag('username', blogPost.username);
+        thundra.setTag('username', blogPost.username);
 
         blogPostService.sendBlogPostMessage(blogPost)
             .then(result => {
@@ -41,16 +41,14 @@ module.exports.reviewBlogPost = (event, context, callback) => {
 
     const blogPostId = event.pathParameters && event.pathParameters.blogPostId;
     if (blogPostId !== null) {
-        // thundra.InvocationTraceSupport.addIncomingTraceLink(blogPostId + '::' + 'SUBMITTED');
         const post = JSON.parse(event.body);
         blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'SUBMITTED')
             .then(result => {
                 if (result.Attributes) {
-                    // thundra.InvocationTraceSupport.addOutgoingTraceLink(blogPostId + '::' + 'REVIEWED');
                     const id = result.Attributes.id.S;
                     const username = result.Attributes.username.S;
                     const phoneNumber = result.Attributes.phoneNumber ? result.Attributes.phoneNumber.S : null;
-                    // thundra.InvocationSupport.setTag('username', username);
+                    thundra.setTag('username', username);
                     if (phoneNumber) {
                         const notificationMessage =
                             'Hi ' + username + ', your blog post ' +
@@ -86,14 +84,13 @@ module.exports.publishBlogPost = (event, context, callback) => {
 
     const blogPostId = event.pathParameters && event.pathParameters.blogPostId;
     if (blogPostId !== null) {
-        // thundra.InvocationTraceSupport.addIncomingTraceLink(blogPostId + '::' + 'REVIEWED');
         blogPostService.updateBlogPost(blogPostId, null, 'PUBLISHED', 'REVIEWED')
             .then(result => {
                 if (result.Attributes) {
                     const id = result.Attributes.id.S;
                     const username = result.Attributes.username.S;
                     const phoneNumber = result.Attributes.phoneNumber ? result.Attributes.phoneNumber.S : null;
-                    // thundra.InvocationSupport.setTag('username', username);
+                    thundra.setTag('username', username);
                     if (phoneNumber) {
                         const notificationMessage =
                             'Hi ' + username + ', your blog post ' +
@@ -143,7 +140,7 @@ module.exports.getBlogPost = (event, context, callback) => {
                     if (result.Item.phoneNumber) {
                         blogPost.phoneNumber = result.Item.phoneNumber.S;
                     }
-                    // thundra.InvocationSupport.setTag('username', blogPost.username);
+                    thundra.setTag('username', blogPost.username);
                     common.sendHttpResponse(200, blogPost, callback);
                 } else {
                     common.sendHttpResponse(404, 'NOT FOUND', callback);

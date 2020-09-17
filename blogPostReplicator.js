@@ -1,4 +1,4 @@
-// const thundra = require('@thundra/core');
+const thundra = require('@thundra/core');
 
 const blogPostService = require('./service/blogPostService');
 
@@ -28,6 +28,7 @@ module.exports.handler = (event, context, callback) => {
                 blogPost.phoneNumber = phoneNumber;
             }
             console.log('Saving blog post: ', JSON.stringify(blogPost));
+            thundra.setTag('username', username);
             const promise = blogPostService.saveBlogPostToIndex(blogPost);
             promises.push(promise);
         } else if (record.eventName === 'REMOVE') {
