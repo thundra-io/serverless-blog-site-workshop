@@ -12,6 +12,7 @@ const BLOG_POST_ES_INDEX_IDENTIFIER = process.env.BLOG_POST_ES_INDEX_IDENTIFIER;
 const WHITE_SPACE_REGEX = new RegExp("\\s+");
 const BANNED_BLOG_POST_WORDS = new Set(['server']);
 const MAX_BLOG_POST_LENGTH = 10000;
+const INDEX_PARTITION_COUNT = 10;
 
 AWS.config.update({region: process.env.AWS_REGION});
 
@@ -24,6 +25,23 @@ var snsForSMS = new AWS.SNS({region: 'us-west-2'});
 var esClient = new es.Client({
     hosts: [BLOG_POST_ES_HOST_NAME + ':' + BLOG_POST_ES_HOST_PORT]
 });
+
+function calculateHashCode(s) {
+    if (!s) {
+        return 0;
+    }
+    try {
+        let h = 0, l = s.length, i = 0;
+        if (l > 0) {
+            while (i < l) {
+                h = (h << 5) - h + s.charCodeAt(i++) | 0;
+            }
+        }
+        return Math.abs(h);
+    } catch (e) {
+        console.error(`Unable to calculate hash code for string ${s}`);
+    }
+}
 
 module.exports.validateBlogPost = (post) => {
     console.log('Validation blog post: ' + post);
@@ -167,8 +185,15 @@ module.exports.publishBlogPostNotification = (message, phoneNumber) => {
 module.exports.saveBlogPostToIndex = (blogPost) => {
     console.log('Indexing blog post: ' + JSON.stringify(blogPost));
 
-    return esClient.index({
-            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
+    let partition;
+    const hashCode = calculateHashCode(blogPost.username);
+    if (hashCode) {
+        partition = hashCode % INDEX_PARTITION_COUNT;
+    }
+    if (partition) {
+        const indexName = `blogpost-${BLOG_POST_ES_INDEX_IDENTIFIER}-${partition}`;
+        return esClient.index({
+            index: indexName,
             type: '_doc',
             id: blogPost.id,
             body: {
@@ -179,14 +204,21 @@ module.exports.saveBlogPostToIndex = (blogPost) => {
                 "timestamp": blogPost.timestamp,
                 "state": blogPost.state
             }
-    });
+        });
+    } else {
+        // If we couldn't resolve partition, we cannot save the blog post.
+        // But if we reject here, it will be retried infinitely from DynamoDB streams.
+        // So we are returning resolved promise here with "false" value
+        // which indicates that it is not saved but skipped silently without need to retry
+        return Promise.resolve(false);
+    }
 };
 
 module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     console.log('Deleting blog post with id=' + blogPostId);
 
     return esClient.delete({
-            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
+            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER + "-*",
             type: '_doc',
             id: blogPostId
     });
@@ -195,7 +227,6 @@ module.exports.deleteBlogPostFromIndex = (blogPostId) => {
 module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestamp, state) => {
     console.log('Searching blog posts for keyword=' + keyword + ', username=' + username +
                 ', startTimestamp=' + startTimestamp + ', endTimestamp=' + endTimestamp);
-
     const conditions = [];
     if (keyword) {
         conditions.push({
@@ -252,9 +283,24 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
         });
     }
 
+    let partition;
+    const hashCode = calculateHashCode(username);
+    if (hashCode) {
+        partition = hashCode % INDEX_PARTITION_COUNT;
+    }
+
+    let indexName = `blogpost-${BLOG_POST_ES_INDEX_IDENTIFIER}`;
+    if (partition) {
+        // If we could decide partition, target that index
+        indexName = `${indexName}-${partition}`;
+    } else {
+        // Otherwise, search in all indexes
+        indexName = `${indexName}-*`;
+    }
+
     return new Promise((resolve, reject) => {
         esClient.search({
-            index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER,
+            index: indexName,
             ignoreUnavailable: true,
             type: '_doc',
             body: {
