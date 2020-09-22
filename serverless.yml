@@ -131,7 +131,9 @@ functions:
           cors: true
   blogPostProcessor:
     handler: blogPostProcessor.handler
+    timeout: 180
     environment:
+      THUNDRA_AGENT_LAMBDA_DEBUGGER_AUTH_TOKEN: <YOUR-THUNDRA-DEBUGGER-TOKEN>
       BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
       BLOG_POST_NOTIFICATION_TOPIC_ARN:
         Ref: BlogPostNotificationTopic
