@@ -31,5 +31,7 @@ module.exports.handler = async(event, context) => {
             promises.push(promise);
 		}
 	}
-	await Promise.all(promises);
+    await Promise.all(promises);
+    
+    return 'Success';
 };

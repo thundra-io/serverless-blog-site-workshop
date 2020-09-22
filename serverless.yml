@@ -34,9 +34,11 @@ resources:
 
 package:
   exclude:
-    - .serverless
-    - .gitignore
-    - frontend/**
+    - ./**
+  include:
+    - node_modules/**
+    - ./*.js
+    - service/*.js
 
 provider:
   name: aws

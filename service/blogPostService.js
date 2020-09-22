@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const es = require('elasticsearch');
+const { getBannedWords } = require('../configProvider');
 
 const BLOG_POST_TABLE_NAME = process.env.BLOG_POST_TABLE_NAME;
 const BLOG_POST_PROCESS_QUEUE_URL = process.env.BLOG_POST_PROCESS_QUEUE_URL;
@@ -10,7 +11,6 @@ const BLOG_POST_ES_HOST_PORT = parseInt(process.env.BLOG_POST_ES_HOST_PORT || '8
 const BLOG_POST_ES_INDEX_IDENTIFIER = process.env.BLOG_POST_ES_INDEX_IDENTIFIER;
 
 const WHITE_SPACE_REGEX = new RegExp("\\s+");
-const BANNED_BLOG_POST_WORDS = new Set(['server']);
 const MAX_BLOG_POST_LENGTH = 10000;
 
 AWS.config.update({region: process.env.AWS_REGION});
@@ -26,13 +26,14 @@ var esClient = new es.Client({
 });
 
 module.exports.validateBlogPost = (post) => {
+    const bannedWords = getBannedWords();
     console.log('Validation blog post: ' + post);
 
     if (post.length > MAX_BLOG_POST_LENGTH) {
         return 'Exceeded max blog length ' + MAX_BLOG_POST_LENGTH;
     }
     for (let word of post.split(WHITE_SPACE_REGEX)) {
-        if (BANNED_BLOG_POST_WORDS.has(word.toLowerCase())) {
+        if (bannedWords.has(word.toLowerCase())) {
             return 'Has banned word: ' + word;
         }
     }
@@ -88,6 +89,10 @@ module.exports.updateBlogPost = (id, post, state, prevState) => {
 module.exports.saveBlogPost = (blogPost) => {
     console.log('Saving blog post: ' + JSON.stringify(blogPost));
 
+    if (!BLOG_POST_TABLE_NAME) {
+        return Promise.resolve();
+    }
+
     const params = {
         TableName: BLOG_POST_TABLE_NAME,
         Item: {
@@ -132,6 +137,10 @@ module.exports.sendBlogPostMessage = (blogPost) => {
 
 module.exports.publishBlogPostNotification = (message, phoneNumber) => {
     console.log('Publishing blog post notification: ' + message);
+
+    if (!BLOG_POST_NOTIFICATION_TOPIC_ARN) {
+        return Promise.resolve();
+    }
 
     const promises = [];
     if (phoneNumber && phoneNumber.length > 0) {
