@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+    
+Globals:
+    Function:
+        Timeout: 10
+        Environment:
+            Variables:
+                THUNDRA_APIKEY: <YOUR-THUNDRA-API-KEY-HERE>
+                
+Resources:
+    BlogPostProcessor:
+        Type: AWS::Serverless::Function
+        Properties:
+            MemorySize: 512
+            CodeUri: ./
+            Handler: blogPostProcessor.handler
+            Runtime: nodejs10.x

@@ -1,0 +1,40 @@
+{
+    "Records": [
+      {
+        "awsRegion": "eu-west-1",
+        "messageAttributes": {
+          "x-thundra-span-id": {
+            "stringListValues": [],
+            "stringValue": "7d7132cc-5abc-4f97-9139-e1dc876750b7",
+            "dataType": "String",
+            "binaryListValues": []
+          },
+          "x-thundra-transaction-id": {
+            "stringListValues": [],
+            "stringValue": "8ef4ed6e-04ab-43b7-b12d-4970a8bb1765",
+            "dataType": "String",
+            "binaryListValues": []
+          },
+          "x-thundra-trace-id": {
+            "stringListValues": [],
+            "stringValue": "a18bed69-fa17-49c6-aa58-cceed335b2c1",
+            "dataType": "String",
+            "binaryListValues": []
+          }
+        },
+        "eventSourceARN": "arn:aws:sqs:eu-west-1:406015463494:BlogPostProcessQueue",
+        "eventSource": "aws:sqs",
+        "messageId": "6b8e86a2-2ab4-46d0-9b3b-082b6f003b5c",
+        "receiptHandle": "AQEBXDtWJtCR7YrOMZHvttYc99lwD2o9uLsPT8QVkwzHCphKMNQkVZ0qwIWA2gcGjM0Fa8Sb7Pu4vKe32TgFFPw70Skhl2EZ4arLy69CM0QX/mhB77YYgXBgOoXcRfkNyMgRjrKt4IUmX8GDRgS4knTsc2E9aVImCwWJxGyfUZAFHZ8iV9BPEZlBE7mUTBj0cooR4NurfIO2jszL415h+thoAeDcHScjYQF8XbdXrdzXiBAb9RAJAL8hfoCDLvyoBNFvyQxgrfQkhQEg0frvW+6PWYJQdD0Y3bvoeSHcJH1r1/apppeOZd3gI7RvpAEY5tOE+trtz2BSirIHNUdtcJWGm+lsgTGpED26RU1Y5By9HpKkQbUj9UvEyPWjWrauDmnOpZbCJS6JzjY2RWoaTaoAbg==",
+        "md5OfBody": "d476808a1912435c840e49edfa7ca4ef",
+        "attributes": {
+          "ApproximateReceiveCount": "1",
+          "SentTimestamp": "1600442833833",
+          "SenderId": "AROAV5CDIKBDJJH66SGV2:blog-site-dev-postBlogPost",
+          "ApproximateFirstReceiveTimestamp": "1600442834833"
+        },
+        "body": "{\"id\":\"6d6620d0-f9c3-11ea-b7dd-63538f42015a\",\"title\":\"foo\",\"post\":\"bar\",\"username\":\"hamit\",\"phoneNumber\":\"\",\"timestamp\":1600442833757}",
+        "md5OfMessageAttributes": "77f45955c541dcc704ada85d14538ad6"
+      }
+    ]
+  }
