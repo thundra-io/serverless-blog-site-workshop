@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "elasticsearch": "^15.4.1",
     "uuid": "^3.3.2"
   },
