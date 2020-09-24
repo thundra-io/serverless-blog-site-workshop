@@ -45,7 +45,7 @@ provider:
   runtime: nodejs12.x
   region: eu-west-1
   environment:
-    THUNDRA_APIKEY: <YOUR-THUNDRA-API-KEY-HERE>
+    THUNDRA_APIKEY: ${env:THUNDRA_APIKEY}
   iamRoleStatements:
     - Effect: Allow
       Action:
