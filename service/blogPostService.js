@@ -217,10 +217,14 @@ module.exports.saveBlogPostToIndex = (blogPost) => {
 module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     console.log('Deleting blog post with id=' + blogPostId);
 
-    return esClient.delete({
+    return esClient.deleteByQuery({
             index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER + "-*",
             type: '_doc',
-            id: blogPostId
+            body: {
+                query: {
+                    match: { _id: blogPostId }
+                }
+            }
     });
 };
 
