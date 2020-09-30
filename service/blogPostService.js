@@ -220,7 +220,11 @@ module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     return esClient.delete({
             index: 'blogpost-' + BLOG_POST_ES_INDEX_IDENTIFIER + "-*",
             type: '_doc',
-            id: blogPostId
+            body: {
+                query: {
+                    match: { _id: blogPostId }
+                }
+            }
     });
 };
 
