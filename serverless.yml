@@ -1,16 +1,23 @@
 service: blog-site
 
 plugins:
-  # For Thundra integration
-  - serverless-plugin-thundra-lambda-adapters-cw # npm install serverless-plugin-thundra-lambda-adapters-cw
+  - serverless-deployment-bucket
+  - serverless-localstack # only activated when stage is "local"
 
 custom:
+  stage: ${opt:stage, "local"}
+  region: ${opt:region, "us-east-1"}
+  deploymentBucketName: ${self:service}-deployment-bucket-${self:custom.stage}
   blogPostProcessQueueName: BlogPostProcessQueue
   blogPostTableName: BlogPostTable
   blogPostNotificationTopicName: BlogPostNotificationTopic
   blogPostElasticsearchHostName: search-serverless-blog-site-es-333yxh7v35aqkpe3uw7ztttfga.eu-west-2.es.amazonaws.com
-  # For Thundra integration
-  thundraApiKey: <YOUR-API-KEY-HERE>
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - local
+    debug: true
+    autostart: true
 
 resources:
   Resources:
@@ -39,25 +46,26 @@ resources:
         TopicName: ${self:custom.blogPostNotificationTopicName}
 
 package:
+  excludeDevDependencies: true
   exclude:
-    - .serverless
-    - .gitignore
+    - .vscode/**
     - frontend/**
+    - doc/**
 
 provider:
   name: aws
-  # For Thundra integration
-  runtime: provided #nodejs8.10
-  region: eu-west-2
-  profile: default # or another profile
-  # For Thundra integration
-  layers:
-    - arn:aws:lambda:${self:provider.region}:269863060030:layer:thundra-lambda-node-layer:26
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  memorySize: ${opt:memory, 512}
+  timeout: ${opt:timeout, 60}
+  deploymentBucket:
+    name: ${self:custom.deploymentBucketName}
   environment:
-    # For Thundra integration
-    thundra_apiKey: ${self:custom.thundraApiKey}
-    thundra_agent_lambda_trace_instrument_traceableConfig: service.blogPostService.*[traceArgs=true,traceReturnValue=true,traceLineByLine=true,traceLinesWithSource=true,traceLocalVariables=true]
-    thundra_agent_lambda_report_cloudwatch_enable: true
+    THUNDRA_APIKEY: ${env:THUNDRA_APIKEY}
+    THUNDRA_AGENT_REPORT_REST_BASEURL: ${env:THUNDRA_AGENT_REPORT_REST_BASEURL}
+    THUNDRA_AGENT_TRACE_INSTRUMENT_TRACEABLECONFIG: src.service.blogPostService.*[traceArgs=true,traceReturnValue=true,traceLineByLine=true]
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -77,8 +85,19 @@ provider:
       Resource: "*" #arn:aws:sns:${self:provider.region}:*:${self:custom.blogPostNotificationTopicName}
 
 functions:
+  searchBlogPosts:
+    handler: src/blogApi.searchBlogPosts
+    environment:
+      BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
+      BLOG_POST_ES_INDEX_IDENTIFIER:
+        Ref: AWS::AccountId
+    events:
+      - http:
+          method: GET
+          path: blog/search
+          cors: true
   postBlogPost:
-    handler: blogApi.postBlogPost
+    handler: src/blogApi.postBlogPost
     environment:
       BLOG_POST_PROCESS_QUEUE_URL:
         Ref: BlogPostProcessQueue
@@ -88,7 +107,7 @@ functions:
           path: blog/post
           cors: true
   reviewBlogPost:
-    handler: blogApi.reviewBlogPost
+    handler: src/blogApi.reviewBlogPost
     environment:
       BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
       BLOG_POST_NOTIFICATION_TOPIC_ARN:
@@ -99,7 +118,7 @@ functions:
           path: blog/review/{blogPostId}
           cors: true
   publishBlogPost:
-    handler: blogApi.publishBlogPost
+    handler: src/blogApi.publishBlogPost
     environment:
       BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
       BLOG_POST_NOTIFICATION_TOPIC_ARN:
@@ -110,7 +129,7 @@ functions:
           path: blog/publish/{blogPostId}
           cors: true
   deleteBlogPost:
-    handler: blogApi.deleteBlogPost
+    handler: src/blogApi.deleteBlogPost
     environment:
       BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
     events:
@@ -119,7 +138,7 @@ functions:
           path: blog/{blogPostId}
           cors: true
   getBlogPost:
-    handler: blogApi.getBlogPost
+    handler: src/blogApi.getBlogPost
     environment:
       BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
     events:
@@ -127,19 +146,8 @@ functions:
           method: GET
           path: blog/{blogPostId}
           cors: true
-  searchBlogPosts:
-    handler: blogApi.searchBlogPosts
-    environment:
-      BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
-      BLOG_POST_ES_INDEX_IDENTIFIER:
-        Ref: AWS::AccountId
-    events:
-      - http:
-          method: GET
-          path: blog/search
-          cors: true
   blogPostProcessor:
-    handler: blogPostProcessor.handler
+    handler: src/blogPostProcessor.handler
     environment:
       BLOG_POST_TABLE_NAME: ${self:custom.blogPostTableName}
       BLOG_POST_NOTIFICATION_TOPIC_ARN:
@@ -152,7 +160,7 @@ functions:
               - Arn
           batchSize: 1
   blogPostReplicator:
-    handler: blogPostReplicator.handler
+    handler: src/blogPostReplicator.handler
     environment:
       BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
       BLOG_POST_ES_INDEX_IDENTIFIER:

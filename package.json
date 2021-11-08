@@ -10,10 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "elasticsearch": "^15.4.1",
+    "serverless-deployment-bucket": "^1.5.1",
+    "serverless-localstack": "^0.4.35",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@thundra/core": "^2.6.2",
+    "@thundra/core": "^2.13.12",
     "aws-sdk": "^2.358.0",
     "serverless-plugin-thundra-lambda-adapters-cw": "^1.0.2"
   }
