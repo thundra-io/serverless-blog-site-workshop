@@ -42,7 +42,9 @@ export const searchBlogsAction = (keyword, username, startDate, endDate, state) 
         const url = `${getState().globalUrl.urlText}/search?keyword=${keyword}&username=${username}&start-timestamp=${startTimestamp}&end-timestamp=${endTimestamp}&state=${state}`;
         // console.log("searchBlogsAction; url: ", url);
 
-        return fetch(`${url}`)
+        return fetch(`${url}`, {
+            headers: { 'Content-Type': 'application/json' }
+        })
             .then(data => data.json())
             .then(data => {
                 // console.log("searchBlogsAction; data, getState: ", data, getState());

@@ -1,5 +1,3 @@
-import store from "../store";
-
 import {
     TOGGLE_URL_LOCK,
     SET_URL_TEXT
@@ -14,6 +12,6 @@ export const toggleUrlLock = () => {
 export const setUrlText = urlString => {
     return {
         type: SET_URL_TEXT,
-        data: urlString
+        data: urlString.replace(/\/$/, ""),
     };
 };

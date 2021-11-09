@@ -30,11 +30,11 @@ resources:
       Properties:
         TableName: ${self:custom.blogPostTableName}
         AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
+          - AttributeName: id
+            AttributeType: S
         KeySchema:
-        - AttributeName: id
-          KeyType: HASH
+          - AttributeName: id
+            KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -59,7 +59,9 @@ provider:
   stage: ${self:custom.stage}
   region: ${self:custom.region}
   memorySize: ${opt:memory, 512}
-  timeout: ${opt:timeout, 60}
+  timeout: ${opt:timeout, 30}
+  # layers:
+  #   - arn:aws:lambda:${self:custom.region}:269863060030:layer:thundra-lambda-node-layer-minified:94
   deploymentBucket:
     name: ${self:custom.deploymentBucketName}
   environment:
@@ -169,4 +171,4 @@ functions:
       - stream:
           type: dynamodb
           arn:
-            Fn::GetAtt: [ BlogPostTable, StreamArn ]
+            Fn::GetAtt: [BlogPostTable, StreamArn]
