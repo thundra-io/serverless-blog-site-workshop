@@ -16,11 +16,8 @@ custom:
     stages:
       # list of stages for which the plugin should be enabled
       - local
-  stages:
-    local:
-      localstack:
-        debug: true
-        autostart: true
+    debug: true
+    autostart: true
 
 resources:
   Resources:
