@@ -25,6 +25,7 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.blogPostProcessQueueName}
+        VisibilityTimeout: 60
     BlogPostTable:
       Type: AWS::DynamoDB::Table
       Properties:
