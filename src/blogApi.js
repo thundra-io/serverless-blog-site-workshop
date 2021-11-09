@@ -5,9 +5,9 @@ const blogPostService = require('./service/blogPostService');
 const uuidv1 = require('uuid/v1');
 
 module.exports.postBlogPost = (event, context, callback) => {
-	console.log('Received blog post post request: ' + JSON.stringify(event));
+    console.log('Received blog post post request: ' + JSON.stringify(event));
 
-	const body = JSON.parse(event.body);
+    const body = JSON.parse(event.body);
 
     if (body.title && body.post && body.username) {
         const blogPost = {
@@ -125,13 +125,13 @@ module.exports.publishBlogPost = (event, context, callback) => {
 };
 
 module.exports.getBlogPost = (event, context, callback) => {
-    console.log('Received blog post get request: ' +  JSON.stringify(event));
+    console.log('Received blog post get request: ' + JSON.stringify(event));
 
     const blogPostId = event.pathParameters && event.pathParameters.blogPostId;
     if (blogPostId !== null) {
         blogPostService.getBlogPost(blogPostId)
-			.then(result => {
-			    if (result.Item) {
+            .then(result => {
+                if (result.Item) {
                     const blogPost = {
                         id: result.Item.id.S,
                         title: result.Item.title.S,
@@ -154,7 +154,7 @@ module.exports.getBlogPost = (event, context, callback) => {
             });
     } else {
         common.sendHttpResponse(400, '\'blogPostId\' is required as path parameter!', callback);
-	}
+    }
 };
 
 module.exports.deleteBlogPost = (event, context, callback) => {
@@ -187,19 +187,12 @@ module.exports.searchBlogPosts = (event, context, callback) => {
     const startTimestamp = event.queryStringParameters && event.queryStringParameters["start-timestamp"];
     const endTimestamp = event.queryStringParameters && event.queryStringParameters["end-timestamp"];
     const state = event.queryStringParameters && event.queryStringParameters["state"];
-    if (!keyword || !username || !startTimestamp || !endTimestamp || !state) {
-        blogPostService.searchBlogPosts(keyword, username, startTimestamp, endTimestamp, state)
-            .then(result => {
-                common.sendHttpResponse(200, result, callback);
-            })
-            .catch(err => {
-                common.sendHttpResponse(500, err, callback);
-            });
-    } else {
-        common.sendHttpResponse(
-            400,
-            'At least one of the \'keyword\', \'username\', \'start-timestamp\', \'end-timestamp\' and \'state\' ' +
-            'parameters is required as query parameter!',
-            callback);
-    }
+
+    blogPostService.searchBlogPosts(keyword, username, startTimestamp, endTimestamp, state)
+        .then(result => {
+            common.sendHttpResponse(200, result, callback);
+        })
+        .catch(err => {
+            common.sendHttpResponse(500, err, callback);
+        });
 };
