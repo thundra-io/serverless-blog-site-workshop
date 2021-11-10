@@ -2,7 +2,7 @@ const thundra = require('@thundra/core');
 
 const common = require('./common');
 const blogPostService = require('./service/blogPostService');
-const uuidv1 = require('uuid/v1');
+const { generateUuid } = require('./utils/index');
 
 module.exports.postBlogPost = (event, context, callback) => {
     console.log('Received blog post post request: ' + JSON.stringify(event));
@@ -11,7 +11,7 @@ module.exports.postBlogPost = (event, context, callback) => {
 
     if (body.title && body.post && body.username) {
         const blogPost = {
-            id: uuidv1(),
+            id: generateUuid(),
             title: body.title,
             post: body.post,
             username: body.username,
@@ -43,7 +43,7 @@ module.exports.reviewBlogPost = (event, context, callback) => {
     if (blogPostId !== null) {
         thundra.addIncomingTraceLink(blogPostId + '::' + 'SUBMITTED');
         const post = JSON.parse(event.body);
-        blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'SUBMITTED')
+        blogPostService.updateBlogPost(blogPostId, post, 'REVIEWED', 'SUBMITED') // NOTE: Typo on SUBMITTED
             .then(result => {
                 if (result.Attributes) {
                     thundra.addOutgoingTraceLink(blogPostId + '::' + 'REVIEWED');

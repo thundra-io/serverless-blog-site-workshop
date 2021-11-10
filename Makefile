@@ -4,7 +4,8 @@ export AWS_SECRET_ACCESS_KEY ?= test
 export AWS_DEFAULT_REGION ?= us-east-1
 export START_WEB ?= 1
 export EXTRA_CORS_ALLOWED_ORIGINS = *
-export THUNDRA_APIKEY = <YOUR-THUNDRA-API-KEY-HERE>
+export THUNDRA_APIKEY = 96274451-e537-46ba-8387-aab72114afb5
+export THUNDRA_AGENT_TEST_PROJECT_ID = db3cf690-793c-44db-bc79-a7b440217993
 
 usage:              ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'

@@ -3,19 +3,23 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "elasticsearch": "^15.4.1",
-    "uuid": "^3.3.2"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@thundra/core": "^2.13.12",
     "aws-sdk": "^2.358.0",
+    "axios": "^0.24.0",
+    "jest": "^27.3.1",
+    "jest-circus": "^27.3.1",
     "serverless-deployment-bucket": "^1.5.1",
-    "serverless-localstack": "^0.4.35"
+    "serverless-localstack": "^0.4.35",
+    "url-join": "^4.0.1"
   }
 }

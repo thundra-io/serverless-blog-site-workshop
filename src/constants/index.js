@@ -1,0 +1,9 @@
+const BLOG_POST_STATUS = {
+    SUBMITTED: 'SUBMITTED',
+    REVIEWED: 'REVIEWED',
+    PUBLISHED: 'PUBLISHED',
+};
+
+module.exports = {
+    BLOG_POST_STATUS,
+}
