@@ -7,4 +7,5 @@ jspm_packages
 
 # Env
 .env
+!frontend/.env
 .venv
