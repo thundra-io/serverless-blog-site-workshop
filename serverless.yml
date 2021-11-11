@@ -1,5 +1,7 @@
 service: blog-site
 
+variablesResolutionMode: 20210326
+
 plugins:
   - serverless-deployment-bucket
   - serverless-localstack # only activated when stage is "local"
@@ -17,7 +19,7 @@ custom:
       # list of stages for which the plugin should be enabled
       - local
     debug: true
-    autostart: true
+    autostart: ${strToBool(${env:LOCALSTACK_START, "false"})}
 
 resources:
   Resources:
@@ -69,7 +71,7 @@ provider:
     THUNDRA_APIKEY: ${env:THUNDRA_APIKEY}
     THUNDRA_AGENT_TEST_PROJECT_ID: ${env:THUNDRA_AGENT_TEST_PROJECT_ID}
     THUNDRA_AGENT_REPORT_REST_BASEURL: ${env:THUNDRA_AGENT_REPORT_REST_BASEURL}
-    THUNDRA_AGENT_TRACE_INSTRUMENT_TRACEABLECONFIG: src.service.blogPostService.*[traceArgs=true,traceReturnValue=true,traceLineByLine=true]
+    THUNDRA_AGENT_TRACE_INSTRUMENT_TRACEABLECONFIG: src.service.blogPostService.*[traceLineByLine=true]
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -93,8 +95,7 @@ functions:
     handler: src/blogApi.searchBlogPosts
     environment:
       BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
-      BLOG_POST_ES_INDEX_IDENTIFIER:
-        Ref: AWS::AccountId
+      BLOG_POST_ES_INDEX_IDENTIFIER: ${env:BLOG_POST_ES_INDEX_IDENTIFIER, ''}
     events:
       - http:
           method: GET
@@ -167,8 +168,7 @@ functions:
     handler: src/blogPostReplicator.handler
     environment:
       BLOG_POST_ES_HOST_NAME: ${self:custom.blogPostElasticsearchHostName}
-      BLOG_POST_ES_INDEX_IDENTIFIER:
-        Ref: AWS::AccountId
+      BLOG_POST_ES_INDEX_IDENTIFIER: ${env:BLOG_POST_ES_INDEX_IDENTIFIER, ''}
     events:
       - stream:
           type: dynamodb
