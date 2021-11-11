@@ -1,10 +1,10 @@
 const urljoin = require('url-join');
 const axios = require('axios');
-const { executeCommand } = require('../src/utils');
+const { executeCommand, generateUuid } = require('../src/utils');
 const { BLOG_POST_STATUS } = require('../src/constants');
 
 describe('Review blog post', function () {
-    jest.setTimeout(300 * 1000);
+    jest.setTimeout(600 * 1000);
     let apiGwUrl;
 
     beforeAll(async () => {
@@ -12,6 +12,7 @@ describe('Review blog post', function () {
             'make start',
             {
                 env: {
+                    BLOG_POST_ES_INDEX_IDENTIFIER: generateUuid(),
                     ...process.env
                 }
             }
@@ -29,7 +30,7 @@ describe('Review blog post', function () {
     });
 
     afterAll(async () => {
-        await executeCommand('docker stop $(docker ps -a -q --filter ancestor=localstack/localstack --format=\"{{.ID}}\")');
+        await executeCommand('make stop-localstack');
     });
 
     it('updates blog state to REVIEWED', async () => {
@@ -53,7 +54,9 @@ describe('Review blog post', function () {
         expect(addBlogResult.data).toBeTruthy();
 
         await expect().eventually(async () => {
-            const searchSubmittedResult = await axios.get(searchBlogUrl, {});
+            const searchSubmittedResult = await axios.get(searchBlogUrl, {
+                state: BLOG_POST_STATUS.SUBMITTED
+            });
 
             expect(searchSubmittedResult).toBeTruthy();
             expect(searchSubmittedResult.status).toBe(200);
@@ -74,7 +77,7 @@ describe('Review blog post', function () {
 
         await expect().eventually(async () => {
             const searchSubmittedResult = await axios.get(searchBlogUrl, {
-                state: 'REVIEWED'
+                state: BLOG_POST_STATUS.REVIEWED
             });
 
             expect(searchSubmittedResult).toBeTruthy();
