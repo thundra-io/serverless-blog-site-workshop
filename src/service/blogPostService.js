@@ -1,10 +1,12 @@
 const AWS = require('aws-sdk');
 const es = require('elasticsearch');
 const config = require('../config');
+const { calculateHashCode } = require('../common');
 
-WHITE_SPACE_REGEX = new RegExp("\\s+");
-BANNED_BLOG_POST_WORDS = new Set(['server']);
-MAX_BLOG_POST_LENGTH = 10000;
+const WHITE_SPACE_REGEX = new RegExp("\\s+");
+const BANNED_BLOG_POST_WORDS = new Set(['server']);
+const MAX_BLOG_POST_LENGTH = 10000;
+const INDEX_PARTITION_COUNT = 10;
 
 AWS.config.update({
     region: config.AWS_REGION,
@@ -163,8 +165,15 @@ module.exports.publishBlogPostNotification = (message, phoneNumber) => {
 module.exports.saveBlogPostToIndex = (blogPost) => {
     console.log('Indexing blog post: ' + JSON.stringify(blogPost));
 
-    return esClient.index({
-            index: 'blogpost-' + config.BLOG_POST_ES_INDEX_IDENTIFIER,
+    let partition;
+    const hashCode = calculateHashCode(blogPost.username);
+    if (hashCode) {
+        partition = hashCode % INDEX_PARTITION_COUNT;
+    }
+    if (partition) {
+        const indexName = `blogpost-${config.BLOG_POST_ES_INDEX_IDENTIFIER}-${partition}`;
+        return esClient.index({
+            index: indexName,
             type: '_doc',
             id: blogPost.id,
             body: {
@@ -175,14 +184,21 @@ module.exports.saveBlogPostToIndex = (blogPost) => {
                 "timestamp": blogPost.timestamp,
                 "state": blogPost.state
             }
-    });
+        });
+    } else {
+        // If we couldn't resolve partition, we cannot save the blog post.
+        // But if we reject here, it will be retried infinitely from DynamoDB streams.
+        // So we are returning resolved promise here with "false" value
+        // which indicates that it is not saved but skipped silently without need to retry
+        return Promise.resolve(false);
+    }
 };
 
 module.exports.deleteBlogPostFromIndex = (blogPostId) => {
     console.log('Deleting blog post with id=' + blogPostId);
 
     return esClient.delete({
-            index: 'blogpost-' + config.BLOG_POST_ES_INDEX_IDENTIFIER,
+            index: 'blogpost-' + config.BLOG_POST_ES_INDEX_IDENTIFIER + '*',
             type: '_doc',
             id: blogPostId
     });
@@ -248,9 +264,24 @@ module.exports.searchBlogPosts = (keyword, username, startTimestamp, endTimestam
         });
     }
 
+    let partition;
+    const hashCode = calculateHashCode(username);
+    if (hashCode) {
+        partition = hashCode % INDEX_PARTITION_COUNT;
+    }
+
+    let indexName = `blogpost-${config.BLOG_POST_ES_INDEX_IDENTIFIER}`;
+    if (partition) {
+        // If we could decide partition, target that index
+        indexName = `${indexName}-${partition}`;
+    } else {
+        // Otherwise, search in all indexes
+        indexName = `${indexName}*`;
+    }
+
     return new Promise((resolve, reject) => {
         esClient.search({
-            index: 'blogpost-' + config.BLOG_POST_ES_INDEX_IDENTIFIER,
+            index: indexName,
             ignoreUnavailable: true,
             type: '_doc',
             body: {
