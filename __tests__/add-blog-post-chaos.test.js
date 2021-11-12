@@ -1,6 +1,6 @@
 const urljoin = require('url-join');
 const axios = require('axios');
-const { executeCommand } = require('../src/utils');
+const { executeCommand, generateUuid } = require('../src/utils');
 
 const { elasticsearchChaos } = require('./config/chaos');
 
@@ -13,6 +13,7 @@ describe('Add blog post', function () {
             'make start',
             {
                 env: {
+                    BLOG_POST_ES_INDEX_IDENTIFIER: generateUuid(),
                     THUNDRA_ELASTICSEARCH_CHAOS: JSON.stringify(elasticsearchChaos),
                     ...process.env
                 }
