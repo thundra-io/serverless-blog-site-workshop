@@ -6,6 +6,7 @@ export START_WEB ?= 1
 export EXTRA_CORS_ALLOWED_ORIGINS = *
 export THUNDRA_APIKEY = <YOUR-THUNDRA-API-KEY-HERE>
 export THUNDRA_AGENT_TEST_PROJECT_ID = <YOUR-THUNDRA-TEST-PROJECT-ID-HERE>
+export THUNDRA_AGENT_REPORT_REST_BASEURL = https://collector.thundra.io/v1
 
 usage:              ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
