@@ -49,7 +49,7 @@ describe('Submit and search blog post', function () {
 
         const addBlogUrl = urljoin(apiGwUrl, 'blog/post');
         const addBlogResult = await axios.post(addBlogUrl, blogPost);
-
+        console.log("Add blog result:", addBlogResult.data);
         expect(addBlogResult).toBeTruthy();
         expect(addBlogResult.status).toBe(202);
         expect(addBlogResult.data).toBeTruthy();
@@ -62,7 +62,7 @@ describe('Submit and search blog post', function () {
 
         await expect().eventually(async () => {
             const getBlogResult = await axios.get(getBlogUrl);
-
+            console.log("Get blog result:", getBlogResult.data);
             expect(getBlogResult).toBeTruthy();
             expect(getBlogResult.status).toBe(200);
             expect(getBlogResult.data).toBeTruthy();
@@ -78,7 +78,7 @@ describe('Submit and search blog post', function () {
         const searchBlogUrl = urljoin(apiGwUrl, `blog/search?username=${userName}&state=${BLOG_POST_STATUS.SUBMITTED}`);
         await expect().eventually(async () => {
             const searchSubmittedResult = await axios.get(searchBlogUrl);
-
+            console.log("Search submitted result:", searchSubmittedResult.data);
             expect(searchSubmittedResult).toBeTruthy();
             expect(searchSubmittedResult.status).toBe(200);
             expect(searchSubmittedResult.data).toBeTruthy();
