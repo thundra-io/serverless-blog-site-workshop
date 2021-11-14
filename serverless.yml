@@ -69,7 +69,7 @@ provider:
     name: ${self:custom.deploymentBucketName}
   environment:
     THUNDRA_APIKEY: ${env:THUNDRA_APIKEY}
-    THUNDRA_AGENT_REPORT_REST_BASEURL: ${env:THUNDRA_AGENT_REPORT_REST_BASEURL}
+    THUNDRA_AGENT_REPORT_REST_BASEURL: ${env:THUNDRA_AGENT_REPORT_REST_BASEURL, "https://collector.thundra.io/v1"}
     THUNDRA_AGENT_TRACE_INSTRUMENT_TRACEABLECONFIG: src.service.blogPostService.*[traceLineByLine=true]
   iamRoleStatements:
     - Effect: Allow
