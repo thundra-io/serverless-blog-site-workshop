@@ -17,7 +17,7 @@ custom:
       # list of stages for which the plugin should be enabled
       - local
     debug: true
-    autostart: true
+    autostart: ${strToBool(${env:LOCALSTACK_START, "false"})}
 
 resources:
   Resources:
