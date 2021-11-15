@@ -20,8 +20,6 @@ custom:
       - local
     debug: true
     autostart: ${strToBool(${env:LOCALSTACK_START, "false"})}
-    lambda:
-      mountCode: true
 
 resources:
   Resources:
