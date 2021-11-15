@@ -18,6 +18,9 @@ custom:
       - local
     debug: true
     autostart: ${strToBool(${env:LOCALSTACK_START, "false"})}
+    lambda:
+      # Enable this flag to improve performance
+      mountCode: True
 
 resources:
   Resources:
