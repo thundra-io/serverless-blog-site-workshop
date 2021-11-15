@@ -11,8 +11,10 @@
 
 #### Backend
 
-- Sign-up to [Thundra Console](https://console.thundra.io) and get your API key.
-- Set your API key to `THUNDRA_APIKEY` property in the `Makefile`.
+- Sign-up to [Thundra](https://start.thundra.io) and get your API key.
+- Choose **Thundra Foresight** and create your first project.
+- Go to the Projects page and select your project's settings.
+- Get the API key and set it to `THUNDRA_APIKEY` property in the `Makefile`.
 - If you're using **AWS CLI v2**, `awslocal` won't work properly. To workaround the issue, we recommend using a Python Virtual Environment to run the project.
   - To activate a virtual environment, run the following commands.
 
