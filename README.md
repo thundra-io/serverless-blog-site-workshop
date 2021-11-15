@@ -15,6 +15,7 @@
 - Choose **Thundra Foresight** and create your first project.
 - Go to the Projects page and select your project's settings.
 - Get the API key and set it to `THUNDRA_APIKEY` property in the `Makefile`.
+- Get the Project ID and set it to `THUNDRA_AGENT_TEST_PROJECT_ID` property in the `Makefile`.
 - If you're using **AWS CLI v2**, `awslocal` won't work properly. To workaround the issue, we recommend using a Python Virtual Environment to run the project.
   - To activate a virtual environment, run the following commands.
 
@@ -23,34 +24,7 @@
     . .venv/bin/activate
     ```
 - Run `make install` to install the dependencies.
-- Run `make start` to start the Backend services with LocalStack and Docker.
-
-Once it's finished, it should print something similar to the following output to give you the service endpoints.
-
-```
-...
-Serverless: Stack update finished...
-Service Information
-service: blog-site
-...
-endpoints:
-  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/post
-  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/review/{blogPostId}
-  POST - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/publish/{blogPostId}
-  DELETE - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/{blogPostId}
-  GET - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/{blogPostId}
-  GET - https://<api-id>.execute-api.eu-west-2.amazonaws.com/dev/blog/search
-...
-```
-
-Note that `<api-id>` part of the endpoints is unique to every one and created API.
-
-#### Frontend
-
-Once you successfully deployed the Backend services, `cd` into the `frontend` directory and run the following commands.
-
-- `npm install`
-- `npm start`
+- Run `make test` to run the tests.
 
 ## Endpoints
 
